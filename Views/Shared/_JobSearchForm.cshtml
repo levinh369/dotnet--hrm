@@ -1,0 +1,108 @@
+﻿@* Views/Shared/_JobSearchForm.cshtml *@
+<div class="card border-0 shadow-sm rounded-3 p-4 sticky-top mx-auto"
+     style="max-width: 450px; width: 100%; top: 80px;">
+
+
+
+    <h5 class="fw-bold text-success mb-3">
+        <i class="fas fa-filter me-2"></i> Lọc nâng cao
+    </h5>
+
+    <form id="filterForm" method="get" asp-action="Index" asp-controller="Job">
+        <!-- Kinh nghiệm -->
+        <!-- Kinh nghiệm -->
+        <div class="mb-4">
+            <label class="fw-semibold text-muted mb-2">Kinh nghiệm</label>
+            <div class="row row-cols-2 g-2">
+                <div class="col">
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="radio" name="Experience" value="" checked>
+                        <span>Tất cả</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="radio" name="Experience" value="0">
+                        <span>Không yêu cầu</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="radio" name="Experience" value="1">
+                        <span>Dưới 1 năm</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="radio" name="Experience" value="2">
+                        <span>1 - 2 năm</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="radio" name="Experience" value="3">
+                        <span>3 năm trở lên</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mức lương -->
+        <div class="mb-4">
+            <label class="fw-semibold text-muted mb-2">Mức lương</label>
+            <div class="row row-cols-2 g-2">
+                <div class="col">
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="radio" name="SalaryRange" value="" checked>
+                        <span>Tất cả</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="radio" name="SalaryRange" value="duoi10">
+                        <span>Dưới 10 triệu</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="radio" name="SalaryRange" value="10-20">
+                        <span>10 - 20 triệu</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="radio" name="SalaryRange" value="20-30">
+                        <span>20 - 30 triệu</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="radio" name="SalaryRange" value="30-50">
+                        <span>30 - 50 triệu</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="radio" name="SalaryRange" value="tren50">
+                        <span>Trên 50 triệu</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sắp xếp -->
+        <div class="mb-4">
+            <label class="fw-semibold text-muted mb-2">Sắp xếp theo</label>
+            <select class="form-select rounded-pill" name="SortBy">
+                <option value="">Mặc định</option>
+                <option value="date_desc">Ngày đăng (mới nhất)</option>
+                <option value="salary_asc">Lương tăng dần</option>
+                <option value="salary_desc">Lương giảm dần</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100 rounded-pill">
+            <i class="fas fa-search me-2"></i> Tìm kiếm
+        </button>
+    </form>
+</div>

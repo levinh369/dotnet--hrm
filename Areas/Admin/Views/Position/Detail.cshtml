@@ -1,0 +1,74 @@
+﻿@model DACN.DTOs.Respone.PositionResponse
+
+<div class="modal fade" id="positionDetailModal" tabindex="-1" aria-labelledby="viewPositionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+
+            <!-- Header -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="viewPositionModalLabel">
+                    <i class="fas fa-briefcase me-2"></i> Chi tiết chức vụ
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <div class="row g-3">
+                    <!-- ID -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Mã chức vụ</label>
+                        <input type="text" class="form-control" value="@Model.Id" readonly />
+                    </div>
+
+                    <!-- Position Name -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Tên chức vụ</label>
+                        <input type="text" class="form-control" value="@Model.PositionName" readonly />
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-md-12">
+                        <label class="form-label fw-semibold">Mô tả</label>
+                        <textarea class="form-control" rows="3" readonly>@Model.Description</textarea>
+                    </div>
+
+                    <!-- Created At -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Ngày tạo</label>
+                        <input type="text" class="form-control"
+                               value="@Model.CreatedAt?.ToString("dd/MM/yyyy HH:mm")" readonly />
+                    </div>
+
+                    <!-- Updated At -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Cập nhật lần cuối</label>
+                        <input type="text" class="form-control"
+                               value="@Model.UpdatedAt?.ToString("dd/MM/yyyy HH:mm")" readonly />
+                    </div>
+
+                    <!-- IsActive -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Trạng thái hoạt động</label>
+                        <input type="text" class="form-control"
+                               value="@(Model.IsActive ? "Đang hoạt động" : "Ngừng hoạt động")" readonly />
+                    </div>
+
+                    <!-- IsDeleted -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Đã xóa mềm</label>
+                        <input type="text" class="form-control"
+                               value="@(Model.IsDeleted ? "Có" : "Không")" readonly />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

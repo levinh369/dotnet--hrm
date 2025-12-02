@@ -1,0 +1,102 @@
+﻿@model DACN.DTOs.Respone.JobApplicationRespone
+
+<div class="modal fade" id="jobApplicationDetailModal" tabindex="-1" aria-labelledby="jobApplicationDetailLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+
+            <!-- Header -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="jobApplicationDetailLabel">
+                    <i class="fas fa-file-alt me-2"></i> Chi tiết hồ sơ ứng tuyển
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <div class="row g-3">
+
+                    <!-- Candidate Name -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Tên ứng viên</label>
+                        <input type="text" class="form-control" value="@Model.CandidateName" readonly />
+                    </div>
+
+                    <!-- Submitted Date -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Ngày nộp</label>
+                        <input type="text" class="form-control"
+                               value="@Model.SubmittedDate.ToString("dd/MM/yyyy")" readonly />
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Trạng thái</label>
+                        <input type="text" class="form-control" value="@Model.Status.ToString()" readonly />
+                    </div>
+
+                    <!-- CV -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">CV</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="@Model.CvUrl" readonly />
+                            <a href="@Model.CvUrl" target="_blank" class="btn btn-outline-primary">
+                                <i class="fas fa-file-pdf"></i> Xem CV
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Education Section Header -->
+                    <div class="col-12">
+                        <h6 class="mt-3 fw-bold">Trình độ học vấn</h6>
+                    </div>
+
+                    <!-- Education Level -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Trình độ</label>
+                        <input type="text" class="form-control" value="@Model.EducationExperience.EducationLevelText" readonly />
+                    </div>
+
+                    <!-- Major -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Chuyên ngành</label>
+                        <input type="text" class="form-control" value="@Model.EducationExperience?.Major" readonly />
+                    </div>
+
+                    <!-- University -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Trường</label>
+                        <input type="text" class="form-control" value="@Model.EducationExperience?.University" readonly />
+                    </div>
+
+                    <!-- Graduation Year -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Năm tốt nghiệp</label>
+                        <input type="text" class="form-control" value="@Model.EducationExperience?.GraduationYear" readonly />
+                    </div>
+
+                    <!-- GPA -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">GPA</label>
+                        <input type="text" class="form-control" value="@Model.EducationExperience?.GPA" readonly />
+                    </div>
+
+                    <!-- Experience Description -->
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Mô tả kinh nghiệm</label>
+                        <textarea class="form-control" rows="3" readonly>@Model.EducationExperience?.ExperienceDescription</textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

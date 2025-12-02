@@ -1,0 +1,113 @@
+﻿@using DACN.Enums
+@using DACN.DTOs.Respone
+@using static DACN.Enums.StatusEnums
+@model ContractRespone
+
+<div class="modal fade" id="detailContractModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold">Chi tiết Hợp đồng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body pt-3">
+                
+                <div class="d-flex align-items-center bg-light p-3 rounded mb-4">
+                    <img src="@(Model.AvatarUrl ?? "/images/default-avatar.png")" class="rounded-circle border bg-white" width="60" height="60">
+                    <div class="ms-3">
+                        <h5 class="mb-0 fw-bold text-primary">@Model.EmployeeName</h5>
+                        <div class="text-muted small">@Model.DepartmentName - @Model.PositionName</div>
+                    </div>
+                    
+                    <div class="ms-auto text-end">
+                        <div class="badge bg-primary fs-6 mb-1">@Model.ContractCode</div>
+                        <div class="small text-muted">Ngày ký: @Model.SignedDate.ToString("dd/MM/yyyy")</div>
+                        
+                        <div class="small text-muted fst-italic" style="font-size: 0.8rem;">
+                            Tạo lúc: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-7 border-end">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Thông tin Hợp đồng</h6>
+
+                        <div class="row mb-2">
+                            <div class="col-4 text-muted">Loại HĐ:</div>
+                            <div class="col-8 fw-medium">
+                                @(Model.Type switch {
+                                    0 => "Thử việc",
+                                    1 => "Có thời hạn",
+                                    2 => "Chính thức (Vô thời hạn)",
+                                    3 => "Thời vụ",
+                                    _ => "Khác"
+                                })
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 text-muted">Thời hạn:</div>
+                            <div class="col-8">
+                                <span class="text-success fw-bold">@Model.StartDate.ToString("dd/MM/yyyy")</span>
+                                <i class="fas fa-arrow-right mx-1 text-muted small"></i>
+                                <span class="text-danger fw-bold">@(Model.EndDate?.ToString("dd/MM/yyyy") ?? "Vô thời hạn")</span>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 text-muted">Trạng thái:</div>
+                            <div class="col-8">
+                                @if (Model.Status == ContractStatus.ConHieuLuc)
+                                {
+                                    <span class="badge bg-success">Đang hiệu lực</span>
+                                }
+                                else if (Model.Status == ContractStatus.ChuaHieuLuc)
+                                {
+                                    <span class="badge bg-warning text-dark">Chưa kích hoạt</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Hết hạn/Hủy</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 text-muted">Ghi chú:</div>
+                            <div class="col-8 fst-italic text-muted">@(string.IsNullOrEmpty(Model.Note) ? "Không có" : Model.Note)</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Lương & Hồ sơ</h6>
+
+                        <div class="card bg-primary bg-opacity-10 border-0 mb-3">
+                            <div class="card-body text-center py-3">
+                                <div class="small text-muted mb-1">Mức lương cơ bản</div>
+                                <h4 class="mb-0 fw-bold text-primary">@Model.BasicSalary.ToString("N0") ₫</h4>
+                            </div>
+                        </div>
+
+                        <h6 class="text-muted small fw-bold mb-2">File đính kèm:</h6>
+                        @if (!string.IsNullOrEmpty(Model.FilePath))
+                        {
+                            <a href="@Model.FilePath" target="_blank" class="btn btn-outline-dark w-100 text-start">
+                                <i class="fas fa-file-pdf text-danger me-2"></i> Xem bản PDF
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="alert alert-secondary py-2 small"><i class="fas fa-exclamation-circle me-1"></i> Chưa upload file</div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary"><i class="fas fa-print me-1"></i> In Hợp đồng</button>
+            </div>
+
+        </div>
+    </div>
+</div>

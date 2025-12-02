@@ -1,0 +1,375 @@
+﻿@page
+@{
+    // ViewData["Title"] = "Ứng tuyển việc làm - Vertex HR";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @* <title>@ViewData["Title"]</title> *@
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --secondary: #6c757d;
+            --success: #198754;
+            --info: #0dcaf0;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(13,110,253,0.8), rgba(25,135,84,0.6)), url('https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+        }
+
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+            .card-hover:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+            .fade-in.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary) !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            border: none;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(13,110,253,0.3);
+            }
+
+        .section-padding {
+            padding: 80px 0;
+        }
+
+        .testimonial-progress {
+            background: var(--light);
+            height: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transition: width 1s ease;
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--dark), #1a1a1a);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar đơn giản -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand fs-4" href="/">Vertex HR</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#jobs">Việc làm</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/About">Về chúng tôi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Contact">Liên hệ</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary ms-2 px-3" href="/Candidate/Register">Đăng ký</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Banner nâng cấp -->
+    <section class="hero-bg position-relative min-vh-100 d-flex align-items-center text-white" style="margin-top: 76px;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 fade-in">
+                    <h1 class="display-3 fw-bold mb-4 gradient-text">Khám phá cơ hội tại Vertex HR</h1>
+                    <p class="lead fs-5 mb-4">Hàng trăm vị trí việc làm HR chuyên nghiệp đang chờ bạn. Tham gia đội ngũ sáng tạo, nơi sự phát triển cá nhân được ưu tiên hàng đầu!</p>
+                    <div class="d-flex gap-3">
+                        <a href="/Candidate/Register" class="btn btn-light btn-lg px-5 py-3">Bắt đầu ứng tuyển</a>
+                        <a href="#jobs" class="btn btn-outline-light btn-lg px-5 py-3">Khám phá việc làm</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center fade-in">
+                    <div class="card bg-white bg-opacity-10 backdrop-blur-lg rounded-4 p-4 shadow-lg">
+                        <h5 class="mb-3"><i class="fas fa-search me-2"></i>Tìm việc nhanh</h5>
+                        <form asp-action="SearchJobs" method="get" class="row g-2">
+                            <div class="col-8">
+                                <input type="text" class="form-control rounded-pill px-4" name="keyword" placeholder="VD: HR Specialist, Recruiter" required>
+                            </div>
+                            <div class="col-4">
+                                <button type="submit" class="btn btn-primary w-100 rounded-pill"><i class="fas fa-search"></i> Tìm</button>
+                            </div>
+                        </form>
+                        <small class="text-white-50 d-block text-center mt-2">Vị trí: <a href="/Candidate/Jobs?location=Hanoi" class="text-white">Hà Nội</a> | <a href="/Candidate/Jobs?location=HCMC" class="text-white">TP. HCM</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Giới thiệu Môi trường (Nâng cấp với icons lớn hơn) -->
+    <section class="section-padding bg-white">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 fade-in">
+                    <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="img-fluid rounded-4 shadow-lg" alt="Môi trường Vertex HR">
+                </div>
+                <div class="col-lg-6 fade-in">
+                    <h2 class="mb-4 fs-1 fw-bold gradient-text">Môi trường làm việc lý tưởng tại Vertex HR</h2>
+                    <p class="lead mb-4">Chúng tôi tạo nên một không gian hỗ trợ, đa dạng và sáng tạo, nơi bạn không chỉ làm việc mà còn phát triển bản thân. Với văn hóa tập trung vào con người, Vertex HR mang đến sự cân bằng hoàn hảo giữa công việc và cuộc sống.</p>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-users fa-3x text-primary me-3"></i>
+                                <h5 class="mb-0">Đội ngũ đa dạng</h5>
+                            </div>
+                            <p>Hơn 200 chuyên gia từ nhiều nền tảng, thúc đẩy sáng tạo và góc nhìn toàn cầu.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-chart-line fa-3x text-success me-3"></i>
+                                <h5 class="mb-0">Cơ hội thăng tiến</h5>
+                            </div>
+                            <p>Đào tạo liên tục, mentor cá nhân hóa và dự án quốc tế đỉnh cao.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-clock fa-3x text-info me-3"></i>
+                                <h5 class="mb-0">Linh hoạt & Phúc lợi</h5>
+                            </div>
+                            <p>Remote/hybrid, bảo hiểm toàn diện, team building và nghỉ phép không giới hạn.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-heart fa-3x text-danger me-3"></i>
+                                <h5 class="mb-0">Văn hóa hỗ trợ</h5>
+                            </div>
+                            <p>Chương trình wellness, feedback 360° và môi trường tích cực.</p>
+                        </div>
+                    </div>
+                    <a href="/About" class="btn btn-primary btn-lg mt-4">Khám phá văn hóa Vertex HR</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Carousel (Giữ nguyên nhưng thêm blur effect) -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5 fs-2 fw-bold gradient-text">Cuộc sống sôi động tại Vertex HR</h2>
+            <div id="companyCarousel" class="carousel slide shadow-lg rounded-4 overflow-hidden" data-bs-ride="carousel">
+                <!-- Indicators và inner giữ nguyên như trước, chỉ thêm style cho caption -->
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#companyCarousel" data-bs-slide-to="0" class="active bg-primary rounded-pill"></button>
+                    <button type="button" data-bs-target="#companyCarousel" data-bs-slide-to="1" class="bg-primary rounded-pill"></button>
+                    <button type="button" data-bs-target="#companyCarousel" data-bs-slide-to="2" class="bg-primary rounded-pill"></button>
+                    <button type="button" data-bs-target="#companyCarousel" data-bs-slide-to="3" class="bg-primary rounded-pill"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="d-block w-100" alt="Văn phòng Vertex HR">
+                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded-pill px-4 py-2">
+                            <h5 class="mb-0">Không gian sáng tạo</h5>
+                        </div>
+                    </div>
+                    <!-- Các item khác tương tự, giữ nguyên src từ trước -->
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="d-block w-100" alt="Team building">
+                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded-pill px-4 py-2">
+                            <h5 class="mb-0">Gắn kết đội ngũ</h5>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="d-block w-100" alt="Đào tạo HR">
+                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded-pill px-4 py-2">
+                            <h5 class="mb-0">Đào tạo chuyên sâu</h5>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="d-block w-100" alt="Đa dạng đội ngũ">
+                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded-pill px-4 py-2">
+                            <h5 class="mb-0">Đa dạng & Hòa nhập</h5>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#companyCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-primary rounded-circle"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#companyCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-primary rounded-circle"></span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Việc làm (Cards với icon lớn, hover đẹp) -->
+    <section id="jobs" class="section-padding bg-white">
+        <div class="container">
+            <h2 class="text-center mb-5 fs-2 fw-bold gradient-text">Vị trí việc làm hot nhất</h2>
+            <div class="row g-4">
+                <!-- Job 1 - Giữ nguyên nhưng thêm class card-hover -->
+                <div class="col-lg-4 col-md-6 fade-in">
+                    <div class="card h-100 card-hover">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-users fa-3x text-primary me-3"></i>
+                                <div>
+                                    <h5 class="card-title mb-1">HR Specialist</h5>
+                                    <p class="text-muted mb-0">HR - Hà Nội | Full-time | 12-18 triệu</p>
+                                </div>
+                            </div>
+                            <p class="card-text">Quản lý tuyển dụng, hỗ trợ nhân viên. Kinh nghiệm 2+ năm trong môi trường đa quốc gia.</p>
+                            <ul class="list-unstyled small text-muted mb-3">
+                                <li><i class="fas fa-calendar me-1"></i> Hạn nộp: 30/11/2025</li>
+                                <li><i class="fas fa-map-marker-alt me-1"></i> Hybrid</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-transparent pt-0">
+                            <a href="/Candidate/Apply/1" class="btn btn-primary btn-sm w-100 mb-1 rounded-pill">Ứng tuyển ngay</a>
+                            <a href="/Candidate/JobDetail/1" class="btn btn-outline-secondary btn-sm w-100 rounded-pill">Chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Job 2 & 3 tương tự, thêm class fade-in và card-hover -->
+                <div class="col-lg-4 col-md-6 fade-in">
+                    <div class="card h-100 card-hover">
+                        <!-- Nội dung Job 2 như trước -->
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 fade-in">
+                    <div class="card h-100 card-hover">
+                        <!-- Nội dung Job 3 như trước -->
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-5">
+                <a href="/Candidate/Jobs" class="btn btn-outline-primary btn-lg px-5 py-3 rounded-pill">Xem tất cả vị trí <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials (Thêm progress bar cho rating) -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5 fs-2 fw-bold gradient-text">Lời chia sẻ từ đồng nghiệp</h2>
+            <div class="row g-4">
+                <div class="col-md-4 fade-in">
+                    <div class="card border-0 shadow-lg h-100 text-center p-4 rounded-4">
+                        <i class="fas fa-quote-left fa-3x text-primary mb-3 opacity-75"></i>
+                        <p class="lead fs-5">"Vertex HR là nơi tôi học hỏi và phát triển mỗi ngày. Môi trường hỗ trợ tuyệt vời!"</p>
+                        <h6 class="text-primary fw-bold">Nguyễn Văn A - HR Specialist</h6>
+                        <div class="testimonial-progress">
+                            <div class="progress-fill" style="width: 95%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Testimonial 2 & 3 tương tự, chỉnh width progress: 92%, 98% -->
+                <div class="col-md-4 fade-in">
+                    <div class="card border-0 shadow-lg h-100 text-center p-4 rounded-4">
+                        <!-- Nội dung tương tự -->
+                        <div class="testimonial-progress">
+                            <div class="progress-fill" style="width: 92%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in">
+                    <div class="card border-0 shadow-lg h-100 text-center p-4 rounded-4">
+                        <!-- Nội dung tương tự -->
+                        <div class="testimonial-progress">
+                            <div class="progress-fill" style="width: 98%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Cuối (Gradient mạnh hơn) -->
+    <section class="section-padding text-white text-center" style="background: linear-gradient(135deg, var(--primary), var(--success));">
+        <div class="container fade-in">
+            <h3 class="display-5 fw-bold mb-3">Sẵn sàng tham gia Vertex HR?</h3>
+            <p class="lead fs-5 mb-4">Tạo hồ sơ và ứng tuyển vị trí mơ ước ngay hôm nay để bắt đầu hành trình mới!</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/Candidate/Register" class="btn btn-light btn-lg px-5 py-3 rounded-pill">Tạo hồ sơ miễn phí</a>
+                <a href="/Candidate/Login" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">Đăng nhập</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer nâng cấp -->
+    <footer class="py-5 text-white">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-md-4 mb-3"><i class="fas fa-building fa-2x mb-2"></i><h5>Vertex HR</h5><p>Công ty hàng đầu về quản lý nhân sự.</p></div>
+                <div class="col-md-4 mb-3"><i class="fas fa-envelope fa-2x mb-2"></i><h5>Liên hệ</h5><p>info@vertexhr.com | +84 123 456 789</p></div>
+                <div class="col-md-4 mb-3"><i class="fas fa-map-marker-alt fa-2x mb-2"></i><h5>Địa chỉ</h5><p>123 Đường ABC, Quận 1, TP. HCM</p></div>
+            </div>
+            <hr class="my-4 opacity-25">
+            <p class="mb-0">&copy; 2025 Vertex HR. Tất cả quyền được bảo lưu. | <a href="/Privacy" class="text-white-50">Bảo mật</a> | <a href="/Terms" class="text-white-50">Điều khoản</a></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Fade-in animation on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

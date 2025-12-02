@@ -1,0 +1,61 @@
+﻿@model DACN.DTOs.Respone.PositionResponse
+
+<div class="modal fade" id="editPositionModal" tabindex="-1" aria-labelledby="editPositionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <div class="modal-header bg-primary text-dark">
+                <h5 class="modal-title fw-bold" id="editPositionModalLabel">
+                    <i class="fas fa-edit me-2"></i> Chỉnh sửa chức vụ
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="formEditPosition">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+
+                    <div class="row g-3">
+                        <!-- Position Name -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Tên chức vụ <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="PositionName" name="PositionName" value="@Model.PositionName" required />
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Mô tả</label>
+                            <textarea class="form-control" id="Description" name="Description" rows="3">@Model.Description</textarea>
+                        </div>
+
+                        <!-- IsActive -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Trạng thái</label>
+                            <select class="form-select" id="IsActive" name="IsActive">
+                                @if (Model.IsActive)
+                                {
+                                    <option value="True" selected="selected">Hoạt động</option>
+                                    <option value="False">Vô hiệu</option>
+                                }
+                                else
+                                {
+                                    <option value="True">Hoạt động</option>
+                                    <option value="False" selected="selected">Vô hiệu</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Hủy
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Cập nhật
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

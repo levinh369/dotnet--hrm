@@ -1,0 +1,121 @@
+﻿@using DACN.DTOs
+<div class="modal fade" id="addJobModal" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="addJobModalLabel">
+                    <i class="fas fa-briefcase me-2"></i> Thêm mới tin tuyển dụng
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="addCVForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- Tiêu đề -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Tiêu đề tin tuyển dụng <span class="text-danger">*</span></label>
+                            <input type="text" name="Title" class="form-control" required />
+                        </div>
+
+                        <!-- Phòng ban -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Phòng ban</label>
+                            <select name="DepartmentId" class="form-select">
+                                <option value="">-- Chọn phòng ban --</option>
+                                @if (ViewBag.Departments != null)
+                                {
+                                    foreach (SelectOptionDto dept in ViewBag.Departments)
+                                    {
+                                        <option value="@dept.Value">@dept.Text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Chức vụ -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Chức vụ</label>
+                            <select name="PositionId" class="form-select">
+                                <option value="">-- Chọn chức vụ --</option>
+                                @if (ViewBag.Positions != null)
+                                {
+                                    foreach (SelectOptionDto pos in ViewBag.Positions)
+                                    {
+                                        <option value="@pos.Value">@pos.Text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <!-- Đối tượng tuyển dụng -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Đối tượng tuyển dụng</label>
+                            <select name="EmploymentType" class="form-select" required>
+                                <option value="">-- Chọn đối tượng --</option>
+                                <option value="0">Thực tập sinh</option>
+                                <option value="1">Nhân viên bán thời gian</option>
+                                <option value="2">Nhân viên chính thức</option>
+                            </select>
+                        </div>
+
+                        <!-- Kinh nghiệm yêu cầu -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Kinh nghiệm yêu cầu</label>
+                            <select name="RequiredExperience" class="form-select" required>
+                                <option value="">-- Chọn mức kinh nghiệm --</option>
+                                <option value="0">Không yêu cầu</option>
+                                <option value="1">Dưới 1 năm</option>
+                                <option value="2">1 - 2 năm</option>
+                                <option value="3">Trên 3 năm</option>
+                            </select>
+                        </div>
+
+                        <!-- Lương -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Mức lương (VNĐ)</label>
+                            <input type="text" name="SalaryRange" class="form-control" placeholder="VD: 12 - 20 triệu" />
+                        </div>
+
+                        <!-- Ngày hết hạn -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Hạn nộp hồ sơ</label>
+                            <input type="date" name="ExpirationDate" class="form-control" />
+                        </div>
+
+                        <!-- Mô tả công việc -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Mô tả công việc</label>
+                            <textarea name="JobDescription" rows="3" class="form-control"></textarea>
+                        </div>
+
+                        <!-- Yêu cầu -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Yêu cầu công việc</label>
+                            <textarea name="Requirements" rows="3" class="form-control"></textarea>
+                        </div>
+
+                        <!-- Trạng thái -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Trạng thái</label>
+                            <select name="Status" class="form-select">
+                                <option value="0">Đang mở</option>
+                                <option value="1">Đã đóng</option>
+                                <option value="2">Hết hạn</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Hủy
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Lưu tin
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,78 @@
+﻿@model IEnumerable<DACN.DTOs.Respone.EmployeeRespone>
+
+<div class="card shadow">
+    <div class="card-body p-4">
+        <h5 class="mb-3"><i class="fas fa-list text-secondary"></i> Danh sách nhân viên</h5>
+
+        <div class="table-responsive">
+            <table class="table table-hover data-table mb-0">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Phòng ban</th>
+                        <th>Chức vụ</th>
+                        <th>Ngày tạo</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        int stt = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@stt</td>
+                                <td>@item.FullName</td>
+                                <td>@item.Email</td>
+                                <td>@item.DepartmentName</td>
+                                <td>@item.PositionName</td>
+                                <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Vô hiệu</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a onclick="Emp.detail(@item.EmployeeId)" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a onclick="Emp.edit(@item.EmployeeId)" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button onclick="Emp.remove(@item.EmployeeId)" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">Không có dữ liệu</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div>
+        Tổng số bản ghi: <strong>@ViewBag.Total</strong>
+    </div>
+    <div id="pagination" data-total-pages="@ViewBag.TotalPage">
+        <ul id="paging-ul" class="pagination pagination-sm"></ul>
+    </div>
+</div>

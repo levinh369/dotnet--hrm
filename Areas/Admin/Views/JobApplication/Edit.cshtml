@@ -1,0 +1,234 @@
+﻿@model DACN.DTOs.Respone.JobApplicationRespone
+@using static DACN.Enums.StatusEnums
+<!-- Modal Chỉnh Sửa -->
+<div class="modal fade" id="jobApplicationEditModal" tabindex="-1" aria-labelledby="jobApplicationEditLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+
+            <!-- Header -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="jobApplicationEditLabel">
+                    <i class="fas fa-edit me-2"></i> Chỉnh sửa hồ sơ ứng tuyển
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <form id="jobApplicationEditForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="EditApplicationId" name="Id" value="@Model.Id" />
+                    <input type="hidden" name="EducationExperience.EducationExperienceId" value="@Model.EducationExperience.EducationExperienceId" />
+                    <div class="row g-3">
+                        <!-- Candidate Name -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tên ứng viên</label>
+                            <input type="text" class="form-control" id="EditCandidateName" name="CandidateName"
+                                   value="@Model.CandidateName" readonly />
+                        </div>
+
+                        <!-- Submitted Date -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ngày nộp</label>
+                            <input type="text" class="form-control" id="EditSubmittedDate" name="SubmittedDate"
+                                   value="@Model.SubmittedDate.ToString("dd/MM/yyyy")" readonly />
+                        </div>
+
+                        <!-- Reviewed Date -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ngày duyệt</label>
+                            <input type="date" class="form-control" id="EditReviewedDate" name="ReviewedDate"
+                                   value="@(Model.ReviewedDate?.ToString("yyyy-MM-dd"))" />
+                        </div>
+
+                        <!-- Status -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Trạng thái</label>
+                            <select class="form-select" id="EditStatus" name="Status">
+                                @if (Model.Status == StatusEnums.ApplicationStatus.Pending)
+                                {
+                                    <option value="0" selected>Chờ duyệt</option>
+                                }
+                                else
+                                {
+                                    <option value="0">Chờ duyệt</option>
+                                }
+
+                                @if (Model.Status == StatusEnums.ApplicationStatus.Approved)
+                                {
+                                    <option value="1" selected>Đã duyệt</option>
+                                }
+                                else
+                                {
+                                    <option value="1">Đã duyệt</option>
+                                }
+
+                                @if (Model.Status == StatusEnums.ApplicationStatus.Rejected)
+                                {
+                                    <option value="2" selected>Từ chối</option>
+                                }
+                                else
+                                {
+                                    <option value="2">Từ chối</option>
+                                }
+                            </select>
+
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Ghi chú</label>
+                            <textarea class="form-control" id="EditNotes" name="Notes" rows="2">@Model.Notes</textarea>
+                        </div>
+
+                        <!-- CV -->
+                        <div class="col-md-12">
+                           
+
+                            <!-- Link CV cũ (chỉ hiển thị link) -->
+                            @if (!string.IsNullOrEmpty(Model.CvUrl))
+                            {
+                                <a href="@Model.CvUrl" target="_blank" class="btn btn-outline-primary mb-2 d-inline-block">
+                                    <i class="fas fa-file-pdf"></i> Xem CV hiện tại
+                                </a>
+                            }
+
+                            <!-- Input ẩn lưu link cũ để controller biết -->
+                            <input type="hidden" name="ExistingCvUrl" value="@Model.CvUrl" />
+
+                            <!-- Drag & Drop area -->
+                            <div class="cv-upload-wrapper border rounded-3 p-3 text-center position-relative"
+                                 style="cursor: pointer; background-color: #f8f9fa;">
+                                <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                <p class="mb-0">Kéo thả file vào đây hoặc nhấn để chọn file mới</p>
+                                <small class="text-muted fst-italic d-block mt-1">Chỉ chấp nhận file .pdf, .doc, .docx</small>
+                                <input type="file" id="EditCvFile" name="CvFilePath" accept=".pdf,.doc,.docx" class="form-control d-none" />
+                                <div class="mt-2 text-truncate" id="EditCvFileName" style="max-width: 100%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Education Section Header -->
+                        <div class="col-12 mt-3">
+                            <h6 class="fw-bold">Trình độ học vấn</h6>
+                        </div>
+
+                        <!-- Education Level -->
+                        <div class="col-md-6">
+                        <label class="form-label fw-semibold">Trình độ</label>
+                        <select class="form-select" id="EditEducationLevel" name="EducationExperience.EducationLevel">
+                            @foreach (EducationLevelEnum level in Enum.GetValues(typeof(EducationLevelEnum)))
+                            {
+                                <option value="@level" selected="@(Model.EducationExperience?.EducationLevel == level ? "selected" : null)">
+                                    @(level switch
+                                    {
+                                        EducationLevelEnum.CaoDang => "Cao đẳng",
+                                        EducationLevelEnum.TrungCap => "Trung cấp",
+                                        EducationLevelEnum.CuNhan => "Cử nhân",
+                                        EducationLevelEnum.KySu => "Kỹ sư",
+                                        EducationLevelEnum.ThacSi => "Thạc sĩ",
+                                        EducationLevelEnum.TienSi => "Tiến sĩ",
+                                        _ => "Không xác định"
+                                    })
+                                </option>
+                            }
+                        </select>
+
+                    </div>
+
+
+                        <!-- Major -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Chuyên ngành</label>
+                            <input type="text" class="form-control" id="EditMajor"
+                                   name="EducationExperience.Major"
+                                   value="@Model.EducationExperience?.Major" />
+                        </div>
+
+                        <!-- University -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Trường</label>
+                            <input type="text" class="form-control" id="EditUniversity"
+                                   name="EducationExperience.University"
+                                   value="@Model.EducationExperience?.University" />
+                        </div>
+
+                        <!-- Graduation Year -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Năm tốt nghiệp</label>
+                            <input type="number" class="form-control" id="EditGraduationYear"
+                                   name="EducationExperience.GraduationYear"
+                                   value="@Model.EducationExperience?.GraduationYear" />
+                        </div>
+
+                        <!-- GPA -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">GPA</label>
+                            <input type="number" step="0.01" class="form-control" id="EditGPA"
+                                   name="EducationExperience.GPA"
+                                   value="@Model.EducationExperience?.GPA" />
+                        </div>
+
+                        <!-- Experience Description -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Mô tả kinh nghiệm</label>
+                            <textarea class="form-control" id="EditExperienceDescription"
+                                      name="EducationExperience.ExperienceDescription"
+                                      rows="3">@Model.EducationExperience?.ExperienceDescription</textarea>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i> Đóng
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const cvWrapper = document.querySelector('.cv-upload-wrapper');
+        const cvInput = document.getElementById('EditCvFile');
+        const cvFileNameDisplay = document.getElementById('EditCvFileName');
+
+        if (!cvWrapper || !cvInput || !cvFileNameDisplay) return;
+
+        cvWrapper.addEventListener('click', () => cvInput.click());
+
+        cvInput.addEventListener('change', () => {
+            if (cvInput.files.length > 0) {
+                cvFileNameDisplay.textContent = `Đã chọn: ${cvInput.files[0].name}`;
+            }
+        });
+
+        cvWrapper.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            cvWrapper.classList.add('border-primary');
+            cvWrapper.style.backgroundColor = '#e9f5ff';
+        });
+        cvWrapper.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            cvWrapper.classList.remove('border-primary');
+            cvWrapper.style.backgroundColor = '#f8f9fa';
+        });
+        cvWrapper.addEventListener('drop', (e) => {
+            e.preventDefault();
+            cvWrapper.classList.remove('border-primary');
+            cvWrapper.style.backgroundColor = '#f8f9fa';
+            if (e.dataTransfer.files.length > 0) {
+                cvInput.files = e.dataTransfer.files;
+                cvFileNameDisplay.textContent = `Đã chọn: ${e.dataTransfer.files[0].name}`;
+            }
+        });
+    })();
+</script>

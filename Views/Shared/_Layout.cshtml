@@ -1,0 +1,241 @@
+﻿@* /Views/Shared/_Layout.cshtml *@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <style>
+
+        .notif-temp-item {
+            animation: slideDownFade 0.3s ease-out forwards;
+            background-color: #fff;
+        }
+
+        /* Hiệu ứng hover cho item */
+        .notif-item-modern:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Style cho nút Xem */
+        .btn-view-notif {
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+            .btn-view-notif:hover {
+                transform: translateX(3px);
+            }
+        /* Ví dụ: Biến nó thành hộp thông báo cố định ở góc trái màn hình */
+        #notifDropdown {
+            position: fixed !important;
+            top: 70px !important;
+            right: 100px !important;
+            left: auto !important;
+            width: 350px !important;
+            z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Đổ bóng đậm hơn cho nổi */
+            border-radius: 12px;
+        }
+
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - Hệ thống quản trị</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap CSS -->
+   
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        @* <title>@ViewData["Title"]</title> *@
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <style>
+            :root {
+                --primary: #0d6efd;
+                --secondary: #6c757d;
+                --success: #198754;
+                --info: #0dcaf0;
+                --warning: #ffc107;
+                --danger: #dc3545;
+                --light: #f8f9fa;
+                --dark: #212529;
+            }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                line-height: 1.6;
+                color: var(--dark);
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            }
+
+            .hero-bg {
+                background: linear-gradient(135deg, rgba(13,110,253,0.8), rgba(25,135,84,0.6)), url('https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+            }
+
+            .card-hover {
+                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                border: none;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+
+                .card-hover:hover {
+                    transform: translateY(-10px) scale(1.02);
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+                }
+
+            .fade-in {
+                opacity: 0;
+                transform: translateY(30px);
+                transition: all 0.6s ease;
+            }
+
+                .fade-in.visible {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+
+            .gradient-text {
+                background: linear-gradient(135deg, var(--primary), var(--success));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .navbar-brand {
+                font-weight: 700;
+                color: var(--primary) !important;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, var(--primary), var(--info));
+                border: none;
+                border-radius: 50px;
+                padding: 12px 30px;
+                font-weight: 500;
+                transition: all 0.3s;
+            }
+
+                .btn-primary:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(13,110,253,0.3);
+                }
+
+            .section-padding {
+                padding: 80px 0;
+            }
+
+            .testimonial-progress {
+                background: var(--light);
+                height: 4px;
+                border-radius: 2px;
+                overflow: hidden;
+                margin-top: 10px;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, var(--primary), var(--success));
+                transition: width 1s ease;
+            }
+
+        #toast-container > .toast {
+            opacity: 1 !important;
+            box-shadow: 0 0 12px #999999;
+        }
+
+        /* Gán cứng màu nền cho từng loại thông báo */
+        #toast-container > .toast-success {
+            background-color: #198754 !important; /* Màu xanh success giống bootstrap */
+        }
+
+        #toast-container > .toast-error {
+            background-color: #dc3545 !important; /* Màu đỏ danger */
+        }
+
+        #toast-container > .toast-info {
+            background-color: #0dcaf0 !important; /* Màu xanh info */
+        }
+
+        #toast-container > .toast-warning {
+            background-color: #ffc107 !important; /* Màu vàng warning */
+        }
+
+        </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand fs-4" href="/">Vertex HR</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/Employee/Job">Việc làm</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/About">Về chúng tôi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Contact">Liên hệ</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary ms-2 px-3" href="/Candidate/Register">Đăng ký</a></li>
+
+                    <!-- 🔔 Notification Bell -->
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item ms-3">
+                            <a class="nav-link position-relative"
+                               data-bs-toggle="modal"
+                               data-bs-target="#notificationModal">
+                                <i id="notificationBell" class="bi bi-bell fs-4"></i>
+                                <span id="notifCount" class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" style="font-size:0.7rem; display:none">0</span>
+                            </a>
+                            <div id="notifDropdown" class="position-absolute" style="top: 40px; right: 0; width: 350px; display:none; z-index:1000;">
+                                <!-- JS sẽ append thông báo vào đây -->
+                            </div>
+                        </li>
+
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Main -->
+    <main class="container mt-4 content-container">
+        @RenderBody()
+    </main> 
+
+    @await Html.PartialAsync("_Footer")
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Bootstrap Bundle JS (includes Popper) -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SignalR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
+
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    @await Html.PartialAsync("~/Areas/Employee/Views/Notification/Notification.cshtml")
+    <!-- Custom JS -->
+    <script src="~/js/Employee/Notification.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

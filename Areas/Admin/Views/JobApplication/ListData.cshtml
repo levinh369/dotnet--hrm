@@ -1,0 +1,120 @@
+﻿@model IEnumerable<DACN.DTOs.Respone.JobApplicationRespone>
+@using DACN.Enums
+
+<div class="card shadow">
+    <div class="card-body p-4">
+        <h5 class="mb-3"><i class="fas fa-file-alt text-secondary"></i> Danh sách hồ sơ ứng tuyển</h5>
+
+        <div class="table-responsive">
+            <table class="table table-hover data-table mb-0">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên ứng viên</th>
+                        <th>Trình độ học vấn</th>
+                        <th>Chuyên ngành</th>
+                        <th>Trường</th>
+                        <th>CV</th>
+                        <th>Ngày nộp</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        int stt = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@stt</td>
+                                <td>@item.CandidateName</td>
+                                <td>@item.EducationExperience?.EducationLevelText</td>
+                                <td>@item.EducationExperience?.Major</td>
+                                <td>@item.EducationExperience?.University</td>
+
+                                <!-- Thay "Năm tốt nghiệp" bằng link CV -->
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.CvUrl))
+                                    {
+                                        <a href="@item.CvUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-file-pdf"></i> Xem CV
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không có CV</span>
+                                    }
+                                </td>
+
+                                <td>@item.SubmittedDate.ToString("dd/MM/yyyy")</td>
+
+                                <td>
+                                    <select id="status-@item.Id" class="form-select form-select-sm"
+                                            onchange="JobApp.changeStatus(@item.Id,this)">
+                                        @if (item.Status == StatusEnums.ApplicationStatus.Pending)
+                                        {
+                                            <option value="0" selected>Chờ duyệt</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="0">Chờ duyệt</option>
+                                        }
+
+                                        @if (item.Status == StatusEnums.ApplicationStatus.Approved)
+                                        {
+                                            <option value="1" selected>Đã duyệt</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="1">Đã duyệt</option>
+                                        }
+
+                                        @if (item.Status == StatusEnums.ApplicationStatus.Rejected)
+                                        {
+                                            <option value="2" selected>Từ chối</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="2">Từ chối</option>
+                                        }
+                                    </select>
+                                </td>
+
+
+
+                                <td>
+                                    <a onclick="JobApp.detail(@item.Id)" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a onclick="JobApp.edit(@item.Id)" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button onclick="Profile.remove(@item.Id)" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center text-muted">Không có dữ liệu</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div>
+        Tổng số hồ sơ: <strong>@ViewBag.Total</strong>
+    </div>
+    <div id="pagination" data-total-pages="@ViewBag.TotalPage">
+        <ul id="paging-ul" class="pagination pagination-sm"></ul>
+    </div>
+</div>

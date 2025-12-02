@@ -1,0 +1,251 @@
+﻿@model DACN.DTOs.Request.ActivateAccountRequest
+
+@{
+    ViewData["Title"] = "Kích hoạt tài khoản";
+    Layout = null; // Hoặc layout auth của bạn
+}
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<style>
+
+    body {
+
+        background-color: #f0f2f5; /* Nền nhẹ nhàng */
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        min-height: 100vh;
+
+        margin: 0;
+
+    }
+
+
+
+    .card-custom {
+
+        border-radius: 15px; /* Bo tròn góc */
+
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+
+        overflow: hidden; /* Đảm bảo bo tròn header */
+
+    }
+
+
+
+    .card-header-custom {
+
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* Gradient màu đẹp */
+
+        color: white;
+
+        text-align: center;
+
+        padding: 2rem 1.5rem;
+
+        font-size: 1.5rem;
+
+        font-weight: bold;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+    }
+
+
+
+        .card-header-custom i {
+
+            margin-right: 10px;
+
+        }
+
+
+
+    .input-group-text {
+
+        background-color: #e9ecef;
+
+        border-right: none;
+
+    }
+
+
+
+    .form-control:focus {
+
+        border-color: #2575fc;
+
+        box-shadow: 0 0 0 0.25rem rgba(37, 117, 252, 0.25);
+
+    }
+
+
+
+    .btn-submit {
+
+        background-color: #2575fc;
+
+        border-color: #2575fc;
+
+        font-weight: bold;
+
+        transition: background-color 0.3s ease;
+
+    }
+
+
+
+        .btn-submit:hover {
+
+            background-color: #1a62d0;
+
+            border-color: #1a62d0;
+
+        }
+
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6 col-xl-5">
+            <div class="card card-custom">
+                <div class="card-header-custom">
+                    @if (ViewBag.IsSuccess == true)
+                    {
+                         <i class="fas fa-check-circle"></i> <span>Thành công</span>
+                    }
+                    else
+                    {
+                         <i class="fas fa-user-lock"></i> <span>Thiết lập mật khẩu mới</span>
+                    }
+                </div>
+                
+                <div class="card-body p-4 p-md-5 text-center">
+                    
+                    @* --- LOGIC KIỂM TRA THÀNH CÔNG --- *@
+                    @if (ViewBag.IsSuccess == true)
+                    {
+                        <div class="success-message">
+                            <div class="mb-3">
+                                <i class="fas fa-check-circle success-icon animate__animated animate__bounceIn"></i>
+                            </div>
+                            <h4 class="text-success mb-3">Kích hoạt tài khoản thành công!</h4>
+                            <p class="mb-4">Mật khẩu của bạn đã được cập nhật.</p>
+                            
+                            <div class="alert alert-light border">
+                                Hệ thống sẽ tự động chuyển đến trang Đăng nhập sau 
+                                <span class="countdown-circle" id="countdown-timer">4</span> giây.
+                            </div>
+
+                            <a href="@ViewBag.RedirectUrl" class="btn btn-primary w-100 mt-2">
+                                <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập ngay
+                            </a>
+                        </div>
+                    }
+                    else 
+                    {
+                        @* --- NẾU CHƯA THÀNH CÔNG THÌ HIỆN FORM (Code cũ của bạn) --- *@
+                        
+                        @if (!string.IsNullOrEmpty(Model.Email))
+                        {
+                            <p class="text-center mb-4">Xin chào <strong class="text-primary">@Model.Email</strong>, vui lòng thiết lập mật khẩu.</p>
+                        }
+
+                        <form asp-action="ActivateAccount" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" asp-for="Token" />
+
+                            <div class="mb-3 text-start">
+                                <label asp-for="NewPassword" class="form-label visually-hidden">Mật khẩu mới</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                    <input asp-for="NewPassword" class="form-control" placeholder="Nhập mật khẩu mới" type="password" id="newPassword" />
+                                    <button type="button" class="btn btn-outline-secondary toggle-password" data-target="newPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="NewPassword" class="text-danger mt-1 d-block small"></span>
+                            </div>
+
+                            <div class="mb-4 text-start">
+                                <label asp-for="ConfirmPassword" class="form-label visually-hidden">Xác nhận mật khẩu</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Xác nhận mật khẩu mới" type="password" id="confirmPassword" />
+                                    <button type="button" class="btn btn-outline-secondary toggle-password" data-target="confirmPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger mt-1 d-block small"></span>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-submit btn-lg">
+                                    <i class="fas fa-check-circle"></i> Kích hoạt tài khoản
+                                </button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    
+    <script>
+        $(document).ready(function () {
+            // Code ẩn hiện mật khẩu cũ
+            $('.toggle-password').click(function () {
+                var targetId = $(this).data('target');
+                var passwordField = $('#' + targetId);
+                var passwordFieldType = passwordField.attr('type');
+                if (passwordFieldType === 'password') {
+                    passwordField.attr('type', 'text');
+                    $(this).find('i').removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    passwordField.attr('type', 'password');
+                    $(this).find('i').removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            // --- CODE ĐẾM NGƯỢC CHUYỂN TRANG ---
+            @if (ViewBag.IsSuccess == true)
+        {
+            <text>
+            // Lấy URL từ ViewBag (Dùng Html.Raw để đảm bảo URL không bị lỗi ký tự đặc biệt)
+            var redirectUrl = '@Html.Raw(ViewBag.RedirectUrl)';
+            var timeLeft = 4;
+            var timerElement = document.getElementById("countdown-timer");
+
+            var downloadTimer = setInterval(function () {
+                timeLeft--; // 1. Giảm thời gian trước
+                
+                // 2. Cập nhật số lên màn hình
+                if (timerElement) {
+                    timerElement.innerHTML = timeLeft;
+                }
+
+                if (0 >= timeLeft) {
+                    clearInterval(downloadTimer);
+                    window.location.href = redirectUrl;
+                }
+            }, 1000); // Chạy mỗi 1000ms (1 giây)
+            </text>
+        }
+        });
+    </script>
+}

@@ -1,0 +1,102 @@
+﻿@model DACN.DTOs.Respone.JobPostingRespone
+@{
+    ViewData["Title"] = "Chi tiết công việc";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5 pt-5 my-5">
+    @await Html.PartialAsync("~/Views/Shared/_SearchForm.cshtml")
+    <!-- Thông tin tổng quan -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <h3 class="fw-bold text-success mb-3">
+                <i class="fas fa-briefcase me-2"></i> @Model.Title
+            </h3>
+
+            <div class="row text-center text-md-start align-items-center mb-3">
+                <div class="col-md-3 col-6 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center justify-content-md-start justify-content-center">
+                        <i class="fas fa-money-bill-wave text-success me-2"></i>
+                        <span class="fw-semibold">Mức lương:</span>&nbsp;@Model.SalaryRange
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center justify-content-md-start justify-content-center">
+                        <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                        <span class="fw-semibold">Địa điểm:</span>&nbsp;Vĩnh Tường, Vĩnh Phúc
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center justify-content-md-start justify-content-center">
+                        <i class="fas fa-building text-primary me-2"></i>
+                        <span class="fw-semibold">Phòng ban:</span>&nbsp;@Model.DepartmentName
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="d-flex align-items-center justify-content-md-start justify-content-center">
+                        <i class="fas fa-calendar-alt text-primary me-2"></i>
+                        <span class="fw-semibold">Hạn nộp hồ sơ:</span>&nbsp;
+                        <span>@Model.ExpirationDate?.ToString("dd/MM/yyyy")</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row text-center text-md-start align-items-center">
+                <div class="col-md-3 col-6 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center justify-content-md-start justify-content-center">
+                        <i class="fas fa-user-tie text-info me-2"></i>
+                        <span class="fw-semibold">Vị trí:</span>&nbsp;@Model.positionName
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center justify-content-md-start justify-content-center">
+                        <i class="fas fa-user text-secondary me-2"></i>
+                        <span class="fw-semibold">Người tuyển dụng:</span>&nbsp;@Model.CreateName
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center justify-content-md-start justify-content-center">
+                        <i class="fas fa-eye text-warning me-2"></i>
+                        <span class="fw-semibold">Lượt xem:</span>&nbsp;@Model.ViewCount
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button onclick="job.openApplyModal(@Model.Id)" class="btn btn-success me-2 px-4">
+                    <i class="fas fa-paper-plane"></i> Ứng tuyển ngay
+                </button>
+                <button class="btn btn-outline-success px-4">
+                    <i class="fas fa-heart"></i> Lưu tin
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chi tiết tin tuyển dụng -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="fw-bold text-success mb-3">
+                <i class="fas fa-info-circle me-2"></i> Chi tiết tin tuyển dụng
+            </h5>
+
+            <!-- Mô tả công việc -->
+            <h6 class="fw-semibold mt-4">Mô tả công việc</h6>
+            <div class="text-muted mb-4">
+                @Html.Raw(Model.JobDescription)
+            </div>
+
+            <!-- Yêu cầu công việc -->
+            <h6 class="fw-semibold mt-4">Yêu cầu công việc</h6>
+            <div class="text-muted mb-4">
+                @Html.Raw(Model.Requirements)
+            </div>
+        </div>
+    </div>
+
+</div>
+<div id="modal-placeholder"></div>
+
+@section Scripts {
+    <script src="~/js/Employee/job.js"></script>
+}

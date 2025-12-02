@@ -1,0 +1,177 @@
+﻿@using static DACN.Enums.StatusEnums
+@* Modal Thêm nhân viên trực tiếp *@
+@* Yêu cầu ViewBag: Departments, Positions, EmployeeStatusList, EducationLevelList, GenderList *@
+
+<div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="addEmployeeForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addEmployeeModalLabel">
+                        <i class="fas fa-user-plus me-2"></i> Thêm mới Nhân viên
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row g-3">
+
+                        <!-- 1. Thông tin Tài khoản & Cá nhân -->
+                        <h6 class="fw-bold text-primary">1. Thông tin Tài khoản & Cá nhân</h6>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Họ và Tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="FullName" placeholder="VD: Nguyễn Văn A" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email (Tên đăng nhập) <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" name="Email" placeholder="VD: an@company.com" required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Số điện thoại</label>
+                            <input type="text" class="form-control" name="Phone" placeholder="VD: 0912345678">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">CCCD</label>
+                            <input type="text" class="form-control" name="CCCD" placeholder="VD: 123456789012">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Ngày sinh</label>
+                            <input type="date" class="form-control" name="DateOfBirth">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Giới tính</label>
+                            <select class="form-select" name="Gender">
+                                <option value="">-- Chọn giới tính --</option>
+                                <option value="true">Nam</option>
+                                <option value="false">Nữ</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label class="form-label">Địa chỉ</label>
+                            <input type="text" class="form-control" name="Address" placeholder="VD: 123 Đường ABC, Quận 1, TP. HCM">
+                        </div>
+
+                        <hr class="my-2">
+
+                        <!-- 2. Thông tin Công việc -->
+                        <h6 class="fw-bold text-primary">2. Thông tin Công việc</h6>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Phòng ban <span class="text-danger">*</span></label>
+                            <select class="form-select" name="DepartmentId" asp-items="ViewBag.Departments"  required>
+                                <option value="">-- Chọn phòng ban --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Vị trí/Chức vụ <span class="text-danger">*</span></label>
+                            <select class="form-select" name="PositionId" asp-items="ViewBag.Positions"  required>
+                                <option value="">-- Chọn chức vụ --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày bắt đầu làm</label>
+                            <input type="date" class="form-control" name="StartDate">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Trạng thái làm việc</label>
+                            <select class="form-select" name="Status">
+                                <option value="">-- Chọn trạng thái --</option>
+                                @foreach (EmployeeStatus status in Enum.GetValues(typeof(EmployeeStatus)))
+                                {
+                                    <option value="@( (int)status )">
+                                        @(
+                                                                            status switch
+                                                                            {
+                                                                                EmployeeStatus.ChuaNhanViec => "Chưa nhận việc",
+                                                                                EmployeeStatus.DangLam => "Đang làm",
+                                                                                EmployeeStatus.TamNghi => "Tạm nghỉ",
+                                                                                EmployeeStatus.DaNghi => "Đã nghỉ",
+                                                                                _ => "Không xác định"
+                                                                            }
+                                                                            )
+                                </option>
+                                                                }
+                            </select>
+
+
+                        </div>
+
+
+                        <hr class="my-2">
+
+                        <!-- 3. Thông tin Học vấn (Cơ bản) -->
+                        <h6 class="fw-bold text-primary">3. Thông tin Học vấn (Cơ bản)</h6>
+                        <p class="text-muted small mt-0">Thông tin học vấn chi tiết có thể được cập nhật sau tại trang hồ sơ nhân viên.</p>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Trình độ học vấn</label>
+                            <select class="form-select" name="EducationLevel" required>
+                                <option value="" selected disabled>-- Chọn trình độ --</option>
+                                @foreach (EducationLevelEnum level in Enum.GetValues(typeof(EducationLevelEnum)))
+                                {
+                                    <option value="@level">
+                                        @(level switch
+                                        {
+                                            EducationLevelEnum.CaoDang => "Cao đẳng",
+                                            EducationLevelEnum.TrungCap => "Trung cấp",
+                                            EducationLevelEnum.CuNhan => "Cử nhân",
+                                            EducationLevelEnum.KySu => "Kỹ sư",
+                                            EducationLevelEnum.ThacSi => "Thạc sĩ",
+                                            EducationLevelEnum.TienSi => "Tiến sĩ",
+                                            _ => "Không xác định"
+                                        })
+                                </option>
+                                                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Năm tốt nghiệp</label>
+                            <input type="number" class="form-control" name="GraduationYear" placeholder="VD: 2024" min="1950" max="2100">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Trường</label>
+                            <input type="text" class="form-control" name="University" placeholder="VD: Đại học Bách Khoa">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Chuyên ngành</label>
+                            <input type="text" class="form-control" name="Major" placeholder="VD: Kỹ thuật phần mềm">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">GPA</label>
+                            <input type="number" class="form-control" name="GPA" placeholder="VD: 3.5" step="0.01" min="0" max="10">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Kỹ năng</label>
+                            <input type="text" class="form-control" name="Skills" placeholder="VD: C#, SQL, Teamwork">
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Đóng
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Lưu lại
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

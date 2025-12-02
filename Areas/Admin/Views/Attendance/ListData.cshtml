@@ -1,0 +1,142 @@
+﻿@using DACN.Enums
+@using static DACN.Enums.StatusEnums
+@model IEnumerable<DACN.DTOs.Respone.AttendanceDetailRespone>
+
+@if (ViewBag.Stats != null)
+{
+    <input type="hidden" id="statsData"
+           value='@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Stats))' />
+}
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light text-secondary text-uppercase small fw-bold">
+            <tr>
+                <th class="ps-4" style="width: 25%;">Nhân viên</th>
+                <th style="width: 15%;">Phòng ban</th>
+                <th class="text-center" style="width: 12%;">Giờ vào</th>
+                <th class="text-center" style="width: 12%;">Giờ ra</th>
+                <th class="text-center" style="width: 10%;">Công</th>
+                <th class="text-center" style="width: 15%;">Trạng thái</th>
+                <th class="text-end pe-4">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody class="border-top-0">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    // Logic màu sắc
+                    string rowClass = item.Status == AttendanceStatus.DiMuon ? "bg-danger bg-opacity-10" : "";
+                    string timeClass = item.Status == AttendanceStatus.DiMuon ? "text-danger" : "text-dark";
+
+                    @* string badgeClass = item.Status switch
+                    {
+                        AttendanceStatus.DungGio => "bg-success",
+                        AttendanceStatus.DiMuon => "bg-danger",
+                        AttendanceStatus.VeSom => "bg-warning text-dark",
+                        AttendanceStatus.VangMat => "bg-secondary",
+                        _ => "bg-info text-dark"
+                    };
+                    string statusName = item.Status switch
+                    {
+                        AttendanceStatus.DungGio => "Đúng giờ",
+                        AttendanceStatus.DiMuon => "Đi muộn",
+                        AttendanceStatus.VangMat => "Vắng mặt",
+                        AttendanceStatus.VeSom => "Về sớm",
+                        _ => "Khác"
+                    }; *@
+
+                    <tr class="@rowClass">
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <img src="@(item.Avatar ?? "https://i.pravatar.cc/150?img=3")" class="rounded-circle border me-3" width="40" height="40">
+                                <div>
+                                    <div class="fw-bold text-dark">@item.EmployeeName</div>
+                                    <small class="text-muted" style="font-size: 0.75rem;">ID: @item.EmployeeId</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-light text-dark border fw-normal">@item.DepartmentName</span></td>
+
+                        <td class="text-center fw-bold @timeClass">
+                            @(item.CheckIn?.ToString(@"hh\:mm") ?? "--:--")
+                        </td>
+                        <td class="text-center fw-bold text-dark">
+                            @(item.CheckOut?.ToString(@"hh\:mm") ?? "--:--")
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border">@item.WorkingHours</span>
+                        </td>
+                        <td class="text-center">
+                            @if (item.Status == AttendanceStatus.DiMuon)
+                            {
+                                <span class="badge bg-danger rounded-pill">Đi muộn</span>
+                            }
+
+                            @if (item.CheckOut != null && item.CheckOut < new TimeSpan(17, 0, 0))
+                            {
+                                <span class="badge bg-warning text-dark rounded-pill ms-1">Về sớm</span>
+                            }
+
+                            @if (item.Status == AttendanceStatus.DungGio && (item.CheckOut == null || item.CheckOut >= new TimeSpan(17, 0, 0)))
+                            {
+                                <span class="badge bg-success rounded-pill">Đúng giờ</span>
+                            }
+                            @if(item.Status == AttendanceStatus.VangMat)
+                            {
+                                <span class="badge bg-secondary rounded-pill">Vắng mặt</span>
+                            }
+        
+                        </td>
+
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                @if (item.Id > 0)
+                                {
+                                    <button class="btn btn-sm btn-light border shadow-sm text-primary"
+                                            onclick="Attendance.detail(@item.Id)" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-sm btn-light border shadow-sm text-muted"
+                                            onclick="toastr.warning('Nhân viên này vắng mặt, không có dữ liệu chi tiết!')"
+                                            title="Chưa có dữ liệu">
+                                        <i class="fas fa-eye-slash"></i>
+                                    </button>
+                                }
+
+                                @if (item.Id > 0)
+                                {
+                                    <button class="btn btn-sm btn-light border shadow-sm text-warning"
+                                            onclick="Attendance.edit(@item.Id)" title="Sửa giờ">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-sm btn-light border shadow-sm text-success"
+                                            onclick="Attendance.create(@item.EmployeeId, '@item.WorkDate?.ToString("yyyy-MM-dd")')"
+                                            title="Bổ sung công (Tạo mới)">
+                                        <i class="fas fa-plus-circle"></i>
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">
+                        <i class="fas fa-search fa-2x mb-3 opacity-50"></i>
+                        <p>Không tìm thấy kết quả nào.</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

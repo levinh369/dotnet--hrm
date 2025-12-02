@@ -1,0 +1,250 @@
+﻿@{
+    ViewData["Title"] = "Bảng Lương Cá Nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Dùng layout Bootstrap của bạn
+}
+    <style>
+        @@media print {
+            /* Ẩn Navbar, Footer, và bộ lọc khi in */
+            .no-print {
+                display: none !important;
+            }
+            /* Đảm bảo nội dung phiếu lương chiếm trọn trang */
+            body {
+                background: #fff !important;
+            }
+
+            .printable-card {
+                box-shadow: none !important;
+                border: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            /* Căn lại lề cho trang in */
+            .container-fluid {
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+            }
+        }
+
+        /* Kiểu cho trạng thái rỗng */
+        .border-dashed {
+            border: 2px dashed #e2e8f0;
+        }
+    </style>
+
+
+<div class="container-fluid py-5" style="padding-top: 80px !important;">
+    <div class="row justify-content-center">
+        <!--
+        Chúng ta dùng col-lg-9 để phiếu lương rộng rãi, dễ đọc
+        -->
+        <div class="col-lg-9 col-md-11">
+
+            <!-- Bộ lọc (sẽ bị ẩn khi in) -->
+            <div class="card shadow-sm mb-4 no-print">
+                <div class="card-body">
+                    <form id="filterForm" class="row g-3 align-items-end">
+                        <div class="col-md-5">
+                            <label for="selectMonth" class="form-label fw-medium">Chọn Tháng</label>
+                            <select id="selectMonth" class="form-select">
+                                <!-- Bạn có thể lặp để tạo 12 tháng -->
+                                <option value="10" selected>Tháng 10</option>
+                                <option value="9">Tháng 9</option>
+                                <option value="8">Tháng 8</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="selectYear" class="form-label fw-medium">Chọn Năm</label>
+                            <select id="selectYear" class="form-select">
+                                <option value="2025" selected>2025</option>
+                                <option value="2024">2024</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" id="btnViewPayslip" class="btn btn-primary w-100">Xem</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Trạng thái rỗng (hiển thị ban đầu) -->
+            <div id="emptyState" class="text-center p-5 border-dashed rounded-3 bg-light">
+                <i class="fas fa-file-invoice-dollar fa-3x text-muted mb-3"></i>
+                <h4 class="text-dark">Xem Bảng Lương Chi Tiết</h4>
+                <p class="text-muted">Vui lòng chọn Tháng và Năm ở trên để xem phiếu lương của bạn.</p>
+            </div>
+
+            <!-- Phiếu lương (bị ẩn ban đầu, và là card để in) -->
+            <div id="payslipCard" class="card shadow-lg border-0 rounded-3 printable-card" style="display: none;">
+                <!-- Header của Phiếu lương -->
+                <div class="card-header bg-primary text-white p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="h4 mb-0 text-white">PHIẾU LƯƠNG</h2>
+                            <p class="mb-0 fs-5" id="payslipPeriod">Tháng 10 / 2025</p>
+                        </div>
+                        <i class="fas fa-file-invoice fa-3x opacity-50"></i>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-sm-5">
+                    <!-- Thông tin nhân viên -->
+                    <h5 class="mb-3">Thông tin nhân viên</h5>
+                    <ul class="list-group list-group-flush list-group-horizontal-md mb-4">
+                        <li class="list-group-item flex-fill">
+                            <small class="text-muted d-block">Nhân viên</small>
+                            <strong class="text-dark">@(User.Identity.Name ?? "[Tên Nhân Viên]")</strong>
+                        </li>
+                        <li class="list-group-item flex-fill">
+                            <small class="text-muted d-block">Mã số nhân viên</small>
+                            <strong class="text-dark">NV12345</strong>
+                        </li>
+                        <li class="list-group-item flex-fill">
+                            <small class="text-muted d-block">Chức vụ</small>
+                            <strong class="text-dark">Nhân viên Phát triển</strong>
+                        </li>
+                    </ul>
+
+                    <!-- Chi tiết Thu nhập và Khấu trừ -->
+                    <div class="row g-4">
+                        <!-- Cột Thu Nhập -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3 text-success">
+                                <i class="fas fa-arrow-down me-2"></i>THU NHẬP
+                            </h5>
+                           
+                            <table class="table table-sm table-borderless mb-0">
+                                <tbody>
+                                    <tr>
+                                        <td>Lương cơ bản</td>
+                                        <td class="text-end fw-medium">15.000.000 VNĐ</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Phụ cấp (Điện thoại, Xăng...)</td>
+                                        <td class="text-end fw-medium">1.000.000 VNĐ</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Thưởng KPIs</td>
+                                        <td class="text-end fw-medium">2.000.000 VNĐ</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Làm thêm giờ (OT)</td>
+                                        <td class="text-end fw-medium">500.000 VNĐ</td>
+                                    </tr>
+                                    <tr class="border-top">
+                                        <td class="fw-bold pt-3">Tổng Thu Nhập (Gross)</td>
+                                        <td class="text-end fw-bold text-success fs-5 pt-3">18.500.000 VNĐ</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Cột Khấu Trừ -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3 text-danger">
+                                <i class="fas fa-arrow-up me-2"></i>KHẤU TRỪ
+                            </h5>
+                           
+                            <table class="table table-sm table-borderless mb-0">
+                                <tbody>
+                                    <tr>
+                                        <td>BHXH (8%)</td>
+                                        <td class="text-end fw-medium">(1.200.000 VNĐ)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>BHYT (1.5%)</td>
+                                        <td class="text-end fw-medium">(225.000 VNĐ)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>BHTN (1%)</td>
+                                        <td class="text-end fw-medium">(150.000 VNĐ)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Thuế TNCN (PIT)</td>
+                                        <td class="text-end fw-medium">(250.000 VNĐ)</td>
+                                    </tr>
+                                    <tr class="border-top">
+                                        <td class="fw-bold pt-3">Tổng Khấu Trừ</td>
+                                        <td class="text-end fw-bold text-danger fs-5 pt-3">(1.825.000 VNĐ)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer (Lương Thực Nhận) -->
+                <div class="card-footer bg-light-subtle p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="h5 fw-bold text-dark mb-0">LƯƠNG THỰC NHẬN (NET PAY)</h4>
+                            <small class="text-muted">Số tiền chuyển vào tài khoản của bạn</small>
+                        </div>
+                        <span class="h3 fw-bolder text-primary mb-0">16.675.000 VNĐ</span>
+                    </div>
+                </div>
+
+                <!-- Nút In (sẽ bị ẩn khi in) -->
+                <div class="card-footer text-end no-print">
+                    <button class="btn btn-outline-secondary" onclick="window.print()">
+                        <i class="fas fa-print me-2"></i>In Phiếu Lương
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnView = document.getElementById('btnViewPayslip');
+            const emptyState = document.getElementById('emptyState');
+            const payslipCard = document.getElementById('payslipCard');
+            const payslipPeriod = document.getElementById('payslipPeriod');
+
+            const selectMonth = document.getElementById('selectMonth');
+            const selectYear = document.getElementById('selectYear');
+
+            btnView.addEventListener('click', function() {
+                // Trong ứng dụng thật, đây là lúc bạn gọi AJAX
+                // để lấy dữ liệu lương của tháng/năm đã chọn.
+
+                // --- Bắt đầu Mô phỏng ---
+                // Cập nhật tiêu đề phiếu lương
+                payslipPeriod.textContent = `Tháng ${selectMonth.value} / ${selectYear.value}`;
+
+                // Ẩn trạng thái rỗng và hiện phiếu lương
+                emptyState.style.display = 'none';
+                payslipCard.style.display = 'block';
+                // --- Kết thúc Mô phỏng ---
+
+                /*
+                // --- Code AJAX thật (ví dụ) ---
+                const month = selectMonth.value;
+                const year = selectYear.value;
+
+                fetch(`/Employee/GetPayslipData?month=${month}&year=${year}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Dùng data để cập nhật các con số trong bảng
+                        // document.getElementById('baseSalary').textContent = data.baseSalary;
+                        // ...
+
+                        // Cập nhật kỳ lương
+                        payslipPeriod.textContent = `Tháng ${month} / ${year}`;
+
+                        // Hiển thị phiếu lương
+                        emptyState.style.display = 'none';
+                        payslipCard.style.display = 'block';
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi tải dữ liệu lương:', error);
+                        // Hiển thị thông báo lỗi (ví dụ: dùng Toastr)
+                    });
+                */
+            });
+        });
+    </script>
+}

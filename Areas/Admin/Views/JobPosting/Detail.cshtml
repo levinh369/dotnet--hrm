@@ -1,0 +1,142 @@
+﻿@model DACN.DTOs.Respone.JobPostingRespone
+@using static DACN.Enums.StatusEnums
+<div class="modal fade" id="viewJobModal" tabindex="-1" aria-labelledby="viewJobModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title fw-bold" id="viewJobModalLabel">
+                    <i class="fas fa-briefcase me-2"></i> Chi tiết tin tuyển dụng
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row g-3">
+                    <!-- Id -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">ID</label>
+                        <input type="text" class="form-control" value="@Model.Id" readonly />
+                    </div>
+
+                    <!-- Title -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Tiêu đề</label>
+                        <input type="text" class="form-control" value="@Model.Title" readonly />
+                    </div>
+
+                    <!-- SalaryRange -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Mức lương</label>
+                        <input type="text" class="form-control" value="@Model.SalaryRange" readonly />
+                    </div>
+
+                    <!-- PostedDate -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Ngày đăng</label>
+                        <input type="text" class="form-control" value="@Model.PostedDate.ToString("dd/MM/yyyy")" readonly />
+                    </div>
+
+                    <!-- ExpirationDate -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Hạn nộp</label>
+                        <input type="text" class="form-control" value="@Model.ExpirationDate?.ToString("dd/MM/yyyy")" readonly />
+                    </div>
+
+                    <!-- UpdateAt -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Cập nhật lần cuối</label>
+                        <input type="text" class="form-control" value="@Model.UpdateAt?.ToString("dd/MM/yyyy HH:mm")" readonly />
+                    </div>
+
+                    <!-- Department -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Phòng ban</label>
+                        <input type="text" class="form-control" value="@Model.DepartmentName" readonly />
+                    </div>
+
+                    <!-- Position -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Chức vụ</label>
+                        <input type="text" class="form-control" value="@Model.positionName" readonly />
+                    </div>
+                    <!-- EmploymentType -->
+                    <!-- EmploymentType -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Đối tượng tuyển dụng</label>
+                        <input type="text" class="form-control"
+                               value="@(
+                                              Model.EmploymentType switch
+                                              {
+                                                  EmploymentType.Internship => "Thực tập sinh",
+                                                  EmploymentType.PartTime => "Nhân viên part-time",
+                                                  EmploymentType.FullTime => "Nhân viên chính thức",
+                                                  _ => "Không xác định"
+                                              }
+                      )" readonly />
+                    </div>
+
+                    <!-- RequiredExperience -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Kinh nghiệm yêu cầu</label>
+                        <input type="text" class="form-control"
+                               value="@(
+                                               Model.ExperienceLevel switch
+                                              {
+                                                  ExperienceLevel.None => "Không yêu cầu",
+                                                  ExperienceLevel.LessThan1Year => "Dưới 1 năm",
+                                                  ExperienceLevel.OneToTwoYears => "1 - 2 năm",
+                                                  ExperienceLevel.ThreeOrMore => "Trên 3 năm",
+                                                  _ => "Không xác định"
+                                              }
+                      )" readonly />
+                    </div>
+
+
+
+                    <!-- CreatedBy -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Người tạo</label>
+                        <input type="text" class="form-control" value="@Model.CreateName" readonly />
+                    </div>
+
+                    <!-- ViewCount -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Lượt xem</label>
+                        <input type="text" class="form-control" value="@Model.ViewCount" readonly />
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Trạng thái</label>
+                        <input type="text" class="form-control" value="@Model.StatusText" readonly />
+                    </div>
+
+                    <!-- JobDescription -->
+                    <div class="col-md-12">
+                        <label class="form-label fw-semibold">Mô tả công việc</label>
+                        <textarea class="form-control" rows="3" readonly>@Model.JobDescription</textarea>
+                    </div>
+
+                    <!-- Requirements -->
+                    <div class="col-md-12">
+                        <label class="form-label fw-semibold">Yêu cầu công việc</label>
+                        <textarea class="form-control" rows="3" readonly>@Model.Requirements</textarea>
+                    </div>
+
+                    <!-- IsActive / IsDeleted -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Đang hoạt động</label>
+                        <input type="text" class="form-control" value="@(Model.IsActive ? "Có" : "Không")" readonly />
+                    </div>
+
+           </div>
+            </div>
+
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

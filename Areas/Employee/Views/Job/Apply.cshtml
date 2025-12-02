@@ -1,0 +1,179 @@
+﻿@using static DACN.Enums.StatusEnums
+<!-- Modal Ứng tuyển -->
+<style>
+   .upload-area {
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.upload-area.dragover {
+    background-color: #e9f7ef;
+    border-color: #28a745;
+}
+
+    </style>
+<div class="modal fade" id="applyJobModal" tabindex="-1" aria-labelledby="applyJobModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header bg-success text-white rounded-top-4">
+                <h5 class="modal-title fw-bold" id="applyJobModalLabel">
+                    <i class="fas fa-file-signature me-2"></i>Ứng tuyển vị trí @Model.Title
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+
+            <form id="applyForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body px-4 py-3">
+
+                    <!-- Hidden Job Id -->
+                    <input type="hidden" name="JobPostingId" value="@Model.Id" />
+
+                    <div class="row g-3">
+
+                        <!-- Loại nhân viên ứng tuyển -->
+                       <div class="col-md-6">
+                    <label class="form-label fw-semibold">Loại nhân viên ứng tuyển</label>
+
+                    <!-- Hiển thị cho người dùng xem -->
+                    <input type="text"
+                           class="form-control"
+                           value="@(
+                               Model.EmploymentType switch {
+                                   EmploymentType.Internship => "Thực tập sinh",
+                                   EmploymentType.PartTime => "Nhân viên part-time",
+                                   EmploymentType.FullTime => "Nhân viên chính thức",
+                                   _ => "Không xác định"
+                               })"
+                           readonly />
+
+                    <!-- Gửi giá trị thật về server -->
+                    <input type="hidden" name="AppliedType" value="@((int)Model.EmploymentType)" />
+                </div>
+
+                        <!-- Kỹ năng -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Kỹ năng</label>
+                            <input type="text" name="Skills" class="form-control" placeholder="VD: C#, SQL, React..." />
+                        </div>
+
+                       <div class="col-md-4">
+                            <label class="form-label fw-semibold">Trình độ</label>
+                            <select class="form-select" name="EducationExperience.EducationLevel" required>
+                                <option value="" selected disabled>-- Chọn trình độ --</option>
+                                @foreach (EducationLevelEnum level in Enum.GetValues(typeof(EducationLevelEnum)))
+                                {
+                                    <option value="@level">
+                                        @(level switch
+                                        {
+                                            EducationLevelEnum.CaoDang => "Cao đẳng",
+                                            EducationLevelEnum.TrungCap => "Trung cấp",
+                                            EducationLevelEnum.CuNhan => "Cử nhân",
+                                            EducationLevelEnum.KySu => "Kỹ sư",
+                                            EducationLevelEnum.ThacSi => "Thạc sĩ",
+                                            EducationLevelEnum.TienSi => "Tiến sĩ",
+                                            _ => "Không xác định"
+                                        })
+                                </option>
+                                                                }
+                            </select>
+                        </div>
+
+                        <!-- Chuyên ngành -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Chuyên ngành</label>
+                            <input type="text" name="EducationExperience.Major" class="form-control" placeholder="VD: CNTT, Marketing..." />
+                        </div>
+
+                        <!-- Trường -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Trường</label>
+                            <input type="text" name="EducationExperience.University" class="form-control" placeholder="VD: Đại học Công nghệ..." />
+                        </div>
+
+                        <!-- Năm tốt nghiệp -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Năm tốt nghiệp</label>
+                            <input type="number" name="EducationExperience.GraduationYear" class="form-control" min="1990" max="@DateTime.Now.Year" />
+                        </div>
+
+                        <!-- GPA -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">GPA</label>
+                            <input type="number" step="0.01" max="10" min="0" name="EducationExperience.GPA" class="form-control" placeholder="VD: 3.2 hoặc 8.0" />
+                        </div>
+
+                        <!-- Mô tả kinh nghiệm -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Mô tả kinh nghiệm làm việc</label>
+                            <textarea name="EducationExperience.ExperienceDescription" class="form-control" rows="3" placeholder="VD: 2 năm làm lập trình viên tại XYZ..."></textarea>
+                        </div>
+
+                        <!-- Upload CV -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Tải lên CV</label>
+                            <!-- Label làm vùng click + drag & drop -->
+                            <label for="cvFileInput" class="upload-area border rounded-3 p-3 text-center d-block position-relative">
+                                <i class="fas fa-cloud-upload-alt fa-2x text-muted"></i>
+                                <p class="mb-0">Kéo thả file vào đây hoặc nhấn để chọn file</p>
+                            </label>
+                            <input type="file" id="cvFileInput" name="CvFilePath" accept=".pdf,.doc,.docx" class="form-control d-none" />
+                            <small class="text-muted fst-italic">Chỉ chấp nhận file .pdf, .doc, .docx</small>
+                            <div class="mt-2" id="cvFileName"></div>
+                        </div>
+
+
+                        <!-- Ghi chú -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Ghi chú thêm</label>
+                            <textarea name="Notes" class="form-control" rows="2" placeholder="Thông tin bổ sung (nếu có)..."></textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </button>
+                    <button type="submit" class="btn btn-success rounded-pill px-4">
+                        <i class="fas fa-paper-plane me-1"></i> Gửi đơn
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+const uploadArea = document.querySelector('.upload-area');
+const fileInput = document.getElementById('cvFileInput');
+const fileNameDisplay = document.getElementById('cvFileName');
+
+// Khi chọn file qua dialog
+fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 0) {
+        fileNameDisplay.textContent = `Đã chọn: ${fileInput.files[0].name}`;
+    }
+});
+
+// Drag & Drop
+uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+});
+
+uploadArea.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+});
+
+uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) {
+        fileInput.files = e.dataTransfer.files;
+        fileNameDisplay.textContent = `Đã chọn: ${e.dataTransfer.files[0].name}`;
+    }
+});
+
+</script>

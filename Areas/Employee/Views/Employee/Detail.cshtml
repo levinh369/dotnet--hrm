@@ -1,0 +1,258 @@
+﻿@using static DACN.Enums.StatusEnums
+@model DACN.DTOs.Respone.ApplicationDetailRespone
+
+@{
+    ViewData["Title"] = "Theo dõi kết quả ứng tuyển";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var status = Model.Status; // 0:Pending, 1:Approved, 2:Rejected
+}
+
+<style>
+    /* 1. Timeline Container */
+    .timeline-step {
+        position: relative;
+        padding-left: 3.5rem;
+        padding-bottom: 3rem;
+    }
+
+        .timeline-step:last-child {
+            padding-bottom: 0;
+        }
+
+        /* 2. Đường kẻ dọc (Nét đứt) */
+        .timeline-step::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            bottom: 0;
+            width: 2px;
+            background-image: linear-gradient(to bottom, #e9ecef 60%, rgba(255, 255, 255, 0) 0%);
+            background-size: 2px 12px;
+            background-repeat: repeat-y;
+        }
+
+        .timeline-step:last-child::before {
+            display: none;
+        }
+
+    /* 3. Icon Tròn */
+    .timeline-icon {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        border: 3px solid #fff;
+        z-index: 1;
+    }
+
+    /* 4. Bong bóng tin nhắn */
+    .message-bubble {
+        background: #f0f7ff;
+        border-radius: 12px;
+        border-top-left-radius: 0;
+        padding: 15px;
+        border: 1px solid #cce5ff;
+        position: relative;
+        margin-top: 10px;
+    }
+
+        .message-bubble::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -10px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid #cce5ff;
+            border-left: 10px solid transparent;
+        }
+
+        /* Custom màu cho bong bóng thành công */
+        .message-bubble.success-bubble {
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+        }
+
+            .message-bubble.success-bubble::before {
+                border-top-color: #badbcc;
+            }
+
+        /* Custom màu cho bong bóng thất bại */
+        .message-bubble.danger-bubble {
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+        }
+
+            .message-bubble.danger-bubble::before {
+                border-top-color: #f5c2c7;
+            }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-white p-2 shadow-sm rounded border me-3">
+                            <img src="https://via.placeholder.com/60" alt="Logo" width="60">
+                        </div>
+
+                        <div>
+                            <h4 class="fw-bold text-dark mb-1">@Model.JobTitle</h4>
+                            <div class="text-muted small">
+                                <i class="fas fa-building me-1"></i> Công ty VerTex HR &bull;
+                                <span class="text-primary fw-bold">#APP-@Model.ApplicationId</span>
+                            </div>
+                        </div>
+
+                        <div class="ms-auto">
+                            @if (status == ApplicationStatus.Pending)
+                            {
+                                <span class="badge bg-warning bg-opacity-10 text-dark px-3 py-2 rounded-pill">
+                                    <i class="fas fa-clock me-1"></i> Đang phỏng vấn
+                                </span>
+                            }
+                            else if (status == ApplicationStatus.Approved)
+                            {
+                                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
+                                    <i class="fas fa-check-circle me-1"></i> Trúng tuyển
+                                </span>
+                            }
+                            else
+                            { // Rejected
+                              <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill">
+                                  <i class="fas fa-times-circle me-1"></i> Không phù hợp
+                              </span>
+                            }
+                        </div>
+                    </div>
+
+                    <hr class="my-3 opacity-10">
+
+                    <div class="row g-3 text-secondary small">
+                        <div class="col-md-6">
+                            <strong>Ứng viên:</strong> <span class="text-dark">@Model.CandidateName</span> <br>
+                            <strong>Email:</strong> @Model.CandidateEmail <br>
+                            <strong>SĐT:</strong> @Model.CandidatePhone
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <div class="mb-1"><span><i class="fas fa-map-marker-alt me-1 text-danger"></i> Vĩnh Phúc</span></div>
+                            <div class="mb-1"><span><i class="fas fa-dollar-sign me-1 text-success"></i> @Model.SalaryRange</span></div>
+                            <div><span><i class="far fa-clock me-1 text-primary"></i> Nộp ngày: @Model.SubmitAt?.ToString("dd/MM/yyyy HH:mm")</span></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-2 border-top text-center">
+                        <a href="@Model.CvUrl" target="_blank" class="text-decoration-none fw-bold small text-primary">
+                            <i class="fas fa-file-pdf me-1"></i> Xem lại CV đã nộp (@Model.CvFileName)
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-stream me-2 text-primary"></i>Tiến trình tuyển dụng</h6>
+                </div>
+                <div class="card-body p-4 ps-5">
+
+                    <div class="timeline-step">
+                        <div class="timeline-icon bg-success text-white"><i class="fas fa-check"></i></div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1">Nộp hồ sơ thành công</h6>
+                            <p class="text-muted small mb-0">@Model.SubmitAt?.ToString("dd/MM/yyyy HH:mm")</p>
+                            <p class="text-secondary small mt-1">Hệ thống đã tiếp nhận hồ sơ của bạn.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step">
+                        <div class="timeline-icon bg-primary text-white"><i class="fas fa-comments"></i></div>
+                        <div>
+                            <h6 class="fw-bold text-primary mb-1">Phỏng vấn & Đánh giá</h6>
+                            <p class="text-secondary small mb-0">
+                                Bộ phận nhân sự sẽ liên hệ qua số điện thoại <strong>@Model.CandidatePhone</strong> để hẹn lịch phỏng vấn trực tiếp hoặc Online.
+                            </p>
+                            <p class="text-muted small fst-italic mt-1">Vui lòng chú ý điện thoại và Email.</p>
+                        </div>
+                    </div>
+
+                    @if (status == ApplicationStatus.Pending)
+                    {
+                        <div class="timeline-step opacity-75">
+                            <div class="timeline-icon bg-light text-muted border-secondary"><i class="fas fa-hourglass-half"></i></div>
+                            <div>
+                                <h6 class="fw-bold text-secondary mb-1">Chờ kết quả</h6>
+                                <p class="text-muted small mb-0">Hội đồng tuyển dụng đang đánh giá kết quả phỏng vấn của bạn...</p>
+                            </div>
+                        </div>
+                    }
+                    else if (status == ApplicationStatus.Approved)
+                    {
+                        <div class="timeline-step">
+                            <div class="timeline-icon bg-success text-white"><i class="fas fa-trophy"></i></div>
+                            <div>
+                                <h6 class="fw-bold text-success mb-1">Chúc mừng! Bạn đã trúng tuyển</h6>
+                                <div class="message-bubble success-bubble shadow-sm mt-2">
+                                    <div class="d-flex">
+                                        <i class="fas fa-gift text-success fs-5 me-3 mt-1"></i>
+                                        <div>
+                                            <strong class="d-block text-dark mb-1">Offer Letter đang được gửi!</strong>
+                                            <p class="mb-0 small text-dark">
+                                                Chúng tôi rất vui mừng chào đón bạn gia nhập đội ngũ Vertex HR. Thư mời nhận việc chi tiết sẽ được gửi qua Email <strong>@Model.CandidateEmail</strong>.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (status == ApplicationStatus.Rejected)
+                    {
+                        <div class="timeline-step">
+                            <div class="timeline-icon bg-danger text-white"><i class="fas fa-times"></i></div>
+                            <div>
+                                <h6 class="fw-bold text-danger mb-1">Kết quả: Chưa phù hợp</h6>
+                                <div class="message-bubble danger-bubble shadow-sm mt-2">
+                                    <div class="d-flex">
+                                        <i class="fas fa-envelope-open-text text-danger fs-5 me-3 mt-1"></i>
+                                        <div>
+                                            <strong class="d-block text-dark mb-1">Thư cảm ơn</strong>
+                                            <p class="mb-0 small text-dark">
+                                                Cảm ơn bạn đã dành thời gian tham gia phỏng vấn. Tuy nhiên, chúng tôi rất tiếc phải thông báo rằng hồ sơ của bạn chưa phù hợp với vị trí này ở thời điểm hiện tại. Chúc bạn sớm tìm được công việc ưng ý.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="/Candidate/Job" class="btn btn-light rounded-pill px-4 text-muted shadow-sm border">
+                    <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách việc làm
+                </a>
+
+                @if (status == ApplicationStatus.Pending)
+                {
+                    <button class="btn btn-outline-danger rounded-pill px-4 ms-2" onclick="cancelApp(@Model.ApplicationId)">
+                        <i class="fas fa-trash-alt me-1"></i> Rút hồ sơ
+                    </button>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>

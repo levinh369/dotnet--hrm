@@ -1,0 +1,129 @@
+﻿@using DACN.Enums
+@using static DACN.Enums.StatusEnums
+@model IEnumerable<DACN.DTOs.Respone.SalaryRespone>
+
+@{
+    System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("vi-VN");
+
+    // 1. TÍNH TỔNG (Đã bỏ Bonus)
+    decimal totalSalary = Model?.Sum(x => x.BaseSalary + x.Allowance) ?? 0;
+    decimal totalNet = Model?.Sum(x => x.NetSalary) ?? 0;
+    decimal totalDeduction = Model?.Sum(x => x.Deduction) ?? 0;
+}
+
+<input type="hidden" id="hid-total" value="@totalSalary.ToString("#,##0") Tr" />
+<input type="hidden" id="hid-net" value="@totalNet.ToString("#,##0") Tr" />
+<input type="hidden" id="hid-deduct" value="@totalDeduction.ToString("#,##0") Tr" />
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="bg-primary text-white small text-uppercase fw-bold">
+            <tr>
+                <th class="py-3 ps-4">Nhân viên</th>
+                <th class="py-3 text-center">Công chuẩn</th>
+                <th class="py-3 text-end">Lương cơ bản</th>
+                <th class="py-3 text-end">Phụ cấp</th>
+                <th class="py-3 text-end">Khấu trừ</th>
+                <th class="py-3 text-end bg-white bg-opacity-10 fw-bold">Thực lĩnh</th>
+                <th class="py-3 text-center">Trạng thái</th>
+                <th class="py-3 text-center">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    // 2. LOGIC MÀU SẮC TRẠNG THÁI
+                    string badgeClass = item.SalaryStatus switch
+                    {
+                        SalaryStatus.Draft => "bg-warning text-dark",
+                        SalaryStatus.Approved => "bg-primary",
+                        SalaryStatus.Paid => "bg-success",
+                        _ => "bg-secondary"
+                    };
+
+                    string statusText = item.SalaryStatus switch
+                    {
+                        SalaryStatus.Draft => "Nháp",
+                        SalaryStatus.Approved => "Đã chốt",
+                        SalaryStatus.Paid => "Đã thanh toán",
+                        _ => "Khác"
+                    };
+
+                    // Chỉ cho phép sửa khi đang ở trạng thái Nháp
+                    bool canEdit = item.SalaryStatus == SalaryStatus.Draft;
+
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <img src="@(item.Avatar ?? "https://i.pravatar.cc/150?img=3")" class="rounded-circle border me-2" width="40" height="40" style="object-fit: cover;">
+                                <div>
+                                    <div class="fw-bold text-dark">@item.EmployeeName</div>
+                                    <small class="text-muted">@item.DepartmentName</small>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border">
+                                @item.WorkDays / 26
+                            </span>
+                        </td>
+
+                        <td class="text-end fw-bold text-secondary">
+                            @item.BaseSalary.ToString("#,##0", culture)
+                        </td>
+
+                        <td class="text-end text-success">
+                            + @item.Allowance.ToString("#,##0", culture)
+                        </td>
+
+                        <td class="text-end text-danger">
+                            - @item.Deduction.ToString("#,##0", culture)
+                        </td>
+
+                        <td class="text-end fw-bold text-primary bg-light fs-6">
+                            @item.NetSalary.ToString("#,##0", culture)
+                        </td>
+
+                        <td class="text-center">
+                            <span class="badge @badgeClass bg-opacity-75 rounded-pill px-3">
+                                @statusText
+                            </span>
+                        </td>
+
+                        <td class="text-center">
+                            @if (canEdit)
+                            {
+                                <button class="btn btn-sm btn-light border shadow-sm text-primary"
+                                        onclick="Salary.edit(@item.SalaryId)"
+                                        title="Chi tiết & Điều chỉnh">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-sm btn-light border text-muted" disabled title="Đã chốt lương, không thể sửa">
+                                    <i class="fas fa-lock"></i>
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" class="text-center py-5 text-muted">
+                        <div class="py-4">
+                            <i class="fas fa-file-invoice-dollar fa-3x mb-3 opacity-25"></i>
+                            <p class="mb-2">Chưa có dữ liệu lương cho tháng này.</p>
+                            <small>Vui lòng bấm nút <strong>"Tính Lương"</strong> để hệ thống tạo bảng lương tự động.</small>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

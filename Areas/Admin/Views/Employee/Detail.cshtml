@@ -1,0 +1,218 @@
+﻿@using DACN.Enums
+@using static DACN.Enums.StatusEnums
+@model DACN.DTOs.Respone.EmployeeDetailRespone
+
+<div class="modal fade" id="detailEmployeeModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header bg-white border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-primary" id="detailModalLabel">
+                    <i class="fas fa-id-card me-2"></i>Hồ sơ Nhân viên
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body pt-3">
+
+                <div class="d-flex align-items-center mb-4 p-3 rounded-3 bg-light">
+                    <img src="@(string.IsNullOrEmpty(Model.Avatar) ? "https://i.pravatar.cc/150?img=11" : Model.Avatar)"
+                         alt="Avatar"
+                         class="rounded-circle border border-3 border-white shadow-sm me-3"
+                         style="width: 80px; height: 80px; object-fit: cover;">
+
+                    <div>
+                        <h4 class="mb-1 fw-bold text-dark">@Model.FullName</h4>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted"><i class="fas fa-briefcase me-1"></i>@Model.PositionName</span>
+                            <span class="text-muted mx-1">|</span>
+                            <span class="badge @(Model.status == StatusEnums.EmployeeStatus.DangLam ? "bg-success" : "bg-secondary")">
+                                @(Model.status == StatusEnums.EmployeeStatus.DangLam ? "Đang làm việc" : "Đã nghỉ")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <ul class="nav nav-tabs nav-fill mb-4" id="employeeDetailTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active fw-bold" id="tab-info-button" data-bs-toggle="tab" data-bs-target="#tab-info" type="button" role="tab" aria-controls="tab-info" aria-selected="true">
+                            <i class="fas fa-user-circle me-2"></i>Thông tin chung
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-bold" id="tab-profile-button" data-bs-toggle="tab" data-bs-target="#tab-profile" type="button" role="tab" aria-controls="tab-profile" aria-selected="false">
+                            <i class="fas fa-graduation-cap me-2"></i>Hồ sơ & Năng lực
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-bold" id="tab-history-button" data-bs-toggle="tab" data-bs-target="#tab-history" type="button" role="tab" aria-controls="tab-history" aria-selected="false">
+                            <i class="fas fa-history me-2"></i>Lịch sử Ứng tuyển
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-bold" id="tab-contract-button" data-bs-toggle="tab" data-bs-target="#tab-contract" type="button" role="tab" aria-controls="tab-contract" aria-selected="false">
+                            <i class="fas fa-file-contract me-2"></i>Hợp đồng
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="employeeDetailTabContent">
+
+                    <div class="tab-pane fade show active" id="tab-info" role="tabpanel" aria-labelledby="tab-info-button">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-uppercase text-muted small fw-bold mb-3">Thông tin Cá nhân</h6>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between ps-0"><span class="text-muted">Email:</span> <span class="fw-bold">@Model.Email</span></li>
+                                    <li class="list-group-item d-flex justify-content-between ps-0"><span class="text-muted">SĐT:</span> <span class="fw-bold">@Model.Phone</span></li>
+                                    <li class="list-group-item d-flex justify-content-between ps-0"><span class="text-muted">CCCD:</span> <span class="fw-bold">@Model.CCCD</span></li>
+                                    <li class="list-group-item d-flex justify-content-between ps-0"><span class="text-muted">Ngày sinh:</span> <span class="fw-bold">@(Model.Dob?.ToString("dd/MM/yyyy") ?? "-")</span></li>
+                                    <li class="list-group-item d-flex justify-content-between ps-0"><span class="text-muted">Giới tính:</span> <span class="fw-bold">@((Model.Gender) ? "Nam" : "Nữ")</span></li>
+                                    <li class="list-group-item d-flex justify-content-between ps-0"><span class="text-muted">Địa chỉ:</span> <span class="fw-bold text-end" style="max-width: 60%">@Model.Address</span></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6 border-start">
+                                <h6 class="text-uppercase text-muted small fw-bold mb-3 ps-3">Công việc hiện tại</h6>
+                                <ul class="list-group list-group-flush ps-3">
+                                    <li class="list-group-item d-flex justify-content-between ps-0"><span class="text-muted">Phòng ban:</span> <span class="fw-bold text-primary">@Model.DepartmentName</span></li>
+                                    <li class="list-group-item d-flex justify-content-between ps-0"><span class="text-muted">Vị trí:</span> <span class="fw-bold">@Model.PositionName</span></li>
+                                    <li class="list-group-item d-flex justify-content-between ps-0"><span class="text-muted">Ngày bắt đầu:</span> <span class="fw-bold">@(Model.StartDate?.ToString("dd/MM/yyyy") ?? "-")</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-profile" role="tabpanel" aria-labelledby="tab-profile-button">
+                        <div class="card border-0 bg-light mb-3">
+                            <div class="card-body">
+                                <h6 class="text-primary fw-bold mb-3"><i class="fas fa-university me-2"></i>Học vấn</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-4"><small class="d-block text-muted">Trường:</small> <strong>@Model.University</strong></div>
+                                    <div class="col-md-4"><small class="d-block text-muted">Chuyên ngành:</small> <strong>@Model.Major</strong></div>
+                                    <div class="col-md-4"><small class="d-block text-muted">Trình độ:</small> <strong>@Model.EducationLevel</strong></div>
+                                    <div class="col-md-4"><small class="d-block text-muted">Năm TN:</small> <strong>@Model.GraduationYear</strong></div>
+                                    <div class="col-md-4"><small class="d-block text-muted">GPA:</small> <span class="badge bg-info text-dark">@Model.GPA</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h6 class="text-primary fw-bold mb-2"><i class="fas fa-tools me-2"></i>Kỹ năng</h6>
+                        <p class="bg-white p-3 border rounded">@(string.IsNullOrEmpty(Model.Skills) ? "Chưa cập nhật" : Model.Skills)</p>
+
+                        <h6 class="text-primary fw-bold mb-2"><i class="fas fa-file-alt me-2"></i>Kinh nghiệm làm việc</h6>
+                        <p class="bg-white p-3 border rounded">@(string.IsNullOrEmpty(Model.ExperienceDescription) ? "Chưa cập nhật" : Model.ExperienceDescription)</p>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-history" role="tabpanel" aria-labelledby="tab-history-button">
+                        @if (Model.jobApplications != null && Model.jobApplications.Any())
+                        {
+                            <div class="table-responsive rounded border">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light text-secondary">
+                                        <tr>
+                                            <th>Vị trí</th>
+                                            <th class="text-center">Ngày nộp</th>
+                                            <th>Người phụ trách</th>
+                                            <th class="text-center">CV</th>
+                                            <th class="text-center">Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.jobApplications)
+                                        {
+                                            <tr>
+                                                <td class="fw-bold text-primary">@item.JobTitle</td>
+                                                <td class="text-center">@(item.SubmittedDate.ToString("dd/MM/yyyy") ?? "-")</td>
+                                                <td><small>@(item.RecruiterName ?? "BP. Tuyển dụng")</small></td>
+                                                <td class="text-center">
+                                                    @if (!string.IsNullOrEmpty(item.CvFilePath))
+                                                    {
+                                                        <a href="@Url.Content(item.CvFilePath)" target="_blank" class="text-danger"><i class="fas fa-file-pdf"></i></a>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td class="text-center">
+                                                    @{
+                                                        string stClass = item.Status switch { "Chờ duyệt" => "bg-secondary", "Trúng tuyển" => "bg-success", "Từ chối" => "bg-danger", _ => "bg-light text-dark" };
+                                                    }
+                                                    <span class="badge @stClass">@item.Status</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning"><i class="fas fa-exclamation-circle me-2"></i>Chưa có lịch sử ứng tuyển.</div>
+                        }
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-contract" role="tabpanel" aria-labelledby="tab-contract-button">
+                        @if (Model.Contracts != null && Model.Contracts.Any())
+                        {
+                            <div class="table-responsive rounded border">
+                                <table class="table table-striped table-hover align-middle mb-0">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Mã HĐ</th>
+                                            <th>Loại</th>
+                                            <th>Thời hạn</th>
+                                            <th class="text-end">Lương</th>
+                                            <th class="text-center">Trạng thái</th>
+                                            <th class="text-center">File</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var c in Model.Contracts)
+                                        {
+                                            <tr>
+                                                <td class="fw-bold text-primary">@c.ContractCode</td>
+                                                <td><span class="badge bg-info text-dark">@(c.Type ?? "HĐLĐ")</span></td>
+                                                <td>
+                                                    <small class="d-block">Từ: @c.StartDate.ToString("dd/MM/yyyy")</small>
+                                                    <small class="d-block text-muted">Đến: @(c.EndDate?.ToString("dd/MM/yyyy") ?? "--")</small>
+                                                </td>
+                                                <td class="text-end fw-bold">@string.Format("{0:N0}", c.BaseSalary)</td>
+                                                <td class="text-center">
+                                                    @if (c.Status == ContractStatus.ConHieuLuc)
+                                                    {
+                                                        <span class="badge bg-success">Hiệu lực</span>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <span class="badge bg-secondary">Hết hạn</span>
+                                                    }
+                                                </td>
+                                                <td class="text-center">
+                                                    @if (!string.IsNullOrEmpty(c.FilePath))
+                                                    {
+                                                        <a href="@c.FilePath" target="_blank" class="text-danger"><i class="fas fa-file-pdf"></i></a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Chưa có hợp đồng.</div>
+                        }
+                    </div>
+
+                </div>
+            </div> <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+
+        </div>
+    </div>
+</div>

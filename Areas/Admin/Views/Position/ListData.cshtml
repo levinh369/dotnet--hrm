@@ -1,0 +1,65 @@
+﻿@model IEnumerable<DACN.DTOs.Respone.PositionResponse>
+
+<div class="card shadow">
+    <div class="card-body p-4">
+        <h5 class="mb-3"><i class="fas fa-list text-secondary"></i> Danh sách chức vụ</h5>
+        <div class="table-responsive">
+            <table class="table table-hover data-table mb-0">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên chức vụ</th>
+                        <th>Mô tả</th>
+                        <th>Ngày tạo</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        int stt = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@stt</td>
+                                <td>@item.PositionName</td>
+                                <td>@item.Description</td>
+                                <td>@item.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Vô hiệu</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a onclick="Pos.detail(@item.Id)" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
+                                    <a onclick="Pos.edit(@item.Id)" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                                    <button onclick="Pos.remove(@item.Id)" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">Không có dữ liệu</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div>Tổng số bản ghi: <strong>@ViewBag.Total</strong></div>
+    <div id="pagination" data-total-pages="@ViewBag.TotalPage">
+        <ul id="paging-ul" class="pagination pagination-sm"></ul>
+    </div>
+</div>

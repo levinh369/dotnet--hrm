@@ -1,0 +1,116 @@
+﻿@using DACN.Enums
+@using static DACN.Enums.StatusEnums
+@* Modal Thêm mới *@
+<div class="modal fade" id="addContractModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="fas fa-file-signature me-2"></i>Tạo Hợp đồng Mới</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="formAddContract">
+                @Html.AntiForgeryToken()
+                <div class="modal-body p-4">
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Nhân viên <span class="text-danger">*</span></label>
+                        <select class="form-select select2" name="EmployeeId" required>
+                            <option value="">-- Tìm kiếm nhân viên --</option>
+                            @if (ViewBag.EmployeeList != null)
+                            {
+                                foreach (var item in ViewBag.EmployeeList)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h6 class="text-success border-bottom pb-2 mb-3">Thông tin Hợp đồng</h6>
+
+                            <div class="mb-3">
+                                <label class="form-label">Mã Hợp đồng <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control bg-light fw-bold"
+                                           name="ContractCode"
+                                           value="@ViewBag.NewContractCode"
+                                           readonly>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="Contract.generateCode()">
+                                        <i class="fas fa-magic"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Loại Hợp đồng <span class="text-danger">*</span></label>
+                                <select class="form-select" name="ContractType"
+                                        asp-items="Html.GetEnumSelectList<ContractType>()">
+                                    <option value="-1">-- Tất cả --</option>
+                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label class="form-label">Ngày ký</label>
+                                    <input type="date" class="form-control" name="SignedDate" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label">Trạng thái</label>
+                                    <select class="form-select" name="status"
+                                            asp-items="Html.GetEnumSelectList<ContractStatus>()">
+                                        <option value="-1">-- Tất cả --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h6 class="text-success border-bottom pb-2 mb-3">Thời hạn & Lương</h6>
+
+                            <div class="mb-3">
+                                <label class="form-label">Lương cơ bản (VNĐ) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control fw-bold text-end" name="BasicSalary" placeholder="0" min="0" required>
+                                    <span class="input-group-text">₫</span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label class="form-label">Hiệu lực từ <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" name="StartDate" required>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label">Đến ngày</label>
+                                    <input type="date" class="form-control" name="EndDate" id="addEndDate">
+                                    <small class="text-muted d-none" id="addEndDateNote">Vô thời hạn</small>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">File đính kèm (PDF)</label>
+                                <input type="file" class="form-control" name="FileContract" accept=".pdf,.doc,.docx">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Ghi chú</label>
+                            <textarea class="form-control" name="Note" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-1"></i> Lưu lại
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

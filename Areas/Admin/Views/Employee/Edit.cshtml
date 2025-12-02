@@ -1,0 +1,209 @@
+﻿@using static DACN.Enums.StatusEnums
+@model DACN.DTOs.Respone.EmployeeDetailRespone
+
+<!-- Modal -->
+<div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">
+                    <i class="fas fa-edit me-2"></i> Chỉnh sửa Hồ sơ Nhân viên
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body (scrollable) -->
+            <div class="modal-body" style="max-height: 75vh; overflow-y: auto;">
+                <form id="editEmployeeForm" method="post">
+
+                    <!-- Hidden Fields -->
+                    <input type="hidden" name="EmployeeId" value="@Model.EmployeeId" />
+                    <input type="hidden" name="UserAccountId" value="@Model.UserAccountId" />
+                    <input type="hidden" name="EducationExperienceId" value="@Model.EducationExperienceId" />
+
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs nav-fill mb-3" id="employeeEditTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="edit-tab-info-button" data-bs-toggle="tab" data-bs-target="#edit-tab-info" type="button" role="tab" aria-controls="edit-tab-info" aria-selected="true">
+                                <i class="fas fa-user-circle me-1"></i> Thông tin chung
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="edit-tab-profile-button" data-bs-toggle="tab" data-bs-target="#edit-tab-profile" type="button" role="tab" aria-controls="edit-tab-profile" aria-selected="false">
+                                <i class="fas fa-graduation-cap me-1"></i> Hồ sơ & Năng lực
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="employeeEditTabContent">
+
+                        <!-- Thông tin chung -->
+                        <div class="tab-pane fade show active" id="edit-tab-info" role="tabpanel" aria-labelledby="edit-tab-info-button">
+                            <h5 class="mb-3">Thông tin Cá nhân & Công việc</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Họ và Tên <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="FullName" value="@Model.FullName" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Email (Tên đăng nhập)</label>
+                                    <input type="email" class="form-control" value="@Model.Email" readonly disabled>
+                                    <div class="form-text">Không thể thay đổi email (tên đăng nhập).</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="Phone" value="@Model.Phone" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">CCCD <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="CCCD" value="@Model.CCCD" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Ngày sinh</label>
+                                    <input type="date" class="form-control" name="DateOfBirth" value="@Model.Dob?.ToString("yyyy-MM-dd")">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Giới tính</label>
+                                    <select class="form-select" name="Gender">
+                                        @if (Model.Gender == true)
+                                        {
+                                            <option value="true" selected>Nam</option>
+                                            <option value="false">Nữ</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="true">Nam</option>
+                                            <option value="false" selected>Nữ</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-8">
+                                    <label class="form-label">Địa chỉ</label>
+                                    <input type="text" class="form-control" name="Address" value="@Model.Address">
+                                </div>
+                                <hr class="my-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Phòng ban <span class="text-danger">*</span></label>
+                                    <select class="form-select" name="DepartmentId" asp-items="ViewBag.Departments" asp-for="DepartmentId" required></select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Vị trí/Chức vụ <span class="text-danger">*</span></label>
+                                    <select class="form-select" name="PositionId" asp-items="ViewBag.Positions" asp-for="PositionId" required></select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Ngày bắt đầu làm</label>
+                                    <input type="date" class="form-control" name="StartDate" value="@Model.StartDate?.ToString("yyyy-MM-dd")">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Trạng thái làm việc</label>
+                                    <select class="form-select" name="Status">
+                                        <option value="">-- Chọn trạng thái --</option>
+                                        @foreach (EmployeeStatus status in Enum.GetValues(typeof(EmployeeStatus)))
+                                        {
+                                            // Lấy tên hiển thị
+                                            var displayText = status switch
+                                            {
+                                                EmployeeStatus.ChuaNhanViec => "Chưa nhận việc",
+                                                EmployeeStatus.DangLam => "Đang làm",
+                                                EmployeeStatus.TamNghi => "Tạm nghỉ",
+                                                EmployeeStatus.DaNghi => "Đã nghỉ",
+                                                _ => "Không xác định"
+                                            };
+
+                                            // Dùng @if để tránh lỗi RZ1031
+                                            @if (Model.status == status) // Giả sử Model có thuộc tính Status (viết hoa)
+                                            {
+                                                <option value="@((int)status)" selected>@displayText</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@((int)status)">@displayText</option>
+                                            }
+                                        }
+                                    </select>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hồ sơ & Năng lực -->
+                        <div class="tab-pane fade" id="edit-tab-profile" role="tabpanel" aria-labelledby="edit-tab-profile-button">
+                            <h5 class="mb-3">Học vấn & Kinh nghiệm (Hồ sơ sống)</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Trình độ học vấn</label>
+                                    <select class="form-select" name="EducationLevel" required>
+                                    @foreach (EducationLevelEnum level in Enum.GetValues(typeof(EducationLevelEnum)))
+                                    {
+                                        // Lấy tên hiển thị từ switch của bạn
+                                        var displayText = level switch
+                                        {
+                                            EducationLevelEnum.CaoDang => "Cao đẳng",
+                                            EducationLevelEnum.TrungCap => "Trung cấp",
+                                            EducationLevelEnum.CuNhan => "Cử nhân",
+                                            EducationLevelEnum.KySu => "Kỹ sư",
+                                            EducationLevelEnum.ThacSi => "Thạc sĩ",
+                                            EducationLevelEnum.TienSi => "Tiến sĩ",
+                                            _ => "Không xác định"
+                                        };
+
+                                        // Dùng @if để tránh lỗi RZ1031
+                                        @if (Model.EducationLevel == level)
+                                        {
+                                            <option value="@level.ToString()" selected>@displayText</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@level.ToString()">@displayText</option>
+                                        }
+                                    }
+                                </select>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Trường</label>
+                                    <input type="text" class="form-control" name="University" value="@Model.University">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Chuyên ngành</label>
+                                    <input type="text" class="form-control" name="Major" value="@Model.Major">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Năm tốt nghiệp</label>
+                                    <input type="number" class="form-control" name="GraduationYear" value="@Model.GraduationYear">
+                                </div>
+                                <hr class="my-3">
+                                <h5 class="mb-3">Tóm tắt kinh nghiệm & Kỹ năng</h5>
+                                <div class="col-12">
+                                    <label class="form-label">Kỹ năng (phân cách bởi dấu phẩy)</label>
+                                    <input type="text" class="form-control" name="Skills" value="@Model.Skills">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Tóm tắt kinh nghiệm</label>
+                                    <textarea class="form-control" name="ExperienceDescription" rows="4">@Model.ExperienceDescription</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Hủy bỏ
+                </button>
+                <button type="submit" class="btn btn-primary" form="editEmployeeForm">
+                    <i class="fas fa-save me-1"></i> Lưu thay đổi
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

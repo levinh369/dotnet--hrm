@@ -1,0 +1,130 @@
+﻿@model DACN.DTOs.Respone.JobPostingRespone
+@using DACN.DTOs
+@using static DACN.Enums.StatusEnums
+
+<div class="modal fade" id="editJobModal" tabindex="-1" aria-labelledby="editJobModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="editJobModalLabel">
+                    <i class="fas fa-edit me-2"></i> Chỉnh sửa tin tuyển dụng
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="editJobForm" >
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" value="@Model.Id" />
+
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- Tiêu đề -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Tiêu đề tin tuyển dụng <span class="text-danger">*</span></label>
+                            <input type="text" name="Title" class="form-control" value="@Model.Title" required />
+                        </div>
+
+                        <!-- Phòng ban -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Phòng ban</label>
+                            @Html.DropDownListFor(m => m.DepartmentId,
+                                                        new SelectList(ViewBag.Departments, "Value", "Text", Model.DepartmentId),
+                                                        "-- Chọn phòng ban --",
+                                                        new { @class = "form-select" })
+                        </div>
+
+                        <!-- Chức vụ -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Chức vụ</label>
+                            @Html.DropDownListFor(m => m.PositionId,
+                                                        new SelectList(ViewBag.Positions, "Value", "Text", Model.PositionId),
+                                                        "-- Chọn chức vụ --",
+                                                        new { @class = "form-select" })
+                        </div>
+
+                        <!-- Lương -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Mức lương (VNĐ)</label>
+                            <input type="text" name="SalaryRange" class="form-control" value="@Model.SalaryRange" placeholder="VD: 12 - 20 triệu" />
+                        </div>
+                        <!-- Đối tượng tuyển dụng -->
+                        <div class="col-md-6">
+                        <label class="form-label fw-semibold">Đối tượng tuyển dụng</label>
+                        @Html.DropDownListFor(m => m.EmploymentType,
+                            new SelectList(Enum.GetValues(typeof(EmploymentType))
+                                .Cast<EmploymentType>()
+                                .Select(e => new { Value = (int)e, Text = e switch {
+                                    EmploymentType.Internship => "Thực tập sinh",
+                                    EmploymentType.PartTime => "Nhân viên bán thời gian",
+                                    EmploymentType.FullTime => "Nhân viên chính thức",
+                                    _ => "Không xác định"
+                                }}),
+                                "Value", "Text", (int)Model.EmploymentType),
+                            "-- Chọn đối tượng --",
+                            new { @class = "form-select" })
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Kinh nghiệm yêu cầu</label>
+                        @Html.DropDownListFor(m => m.ExperienceLevel,
+                            new SelectList(Enum.GetValues(typeof(ExperienceLevel))
+                                .Cast<ExperienceLevel>()
+                                .Select(e => new { Value = (int)e, Text = e switch {
+                                    ExperienceLevel.None => "Không yêu cầu",
+                                    ExperienceLevel.LessThan1Year => "Dưới 1 năm",
+                                    ExperienceLevel.OneToTwoYears => "1 - 2 năm",
+                                    ExperienceLevel.ThreeOrMore => "Trên 3 năm",
+                                    _ => "Không xác định"
+                                }}),
+                                "Value", "Text", (int)Model.ExperienceLevel),
+                            "-- Chọn kinh nghiệm --",
+                            new { @class = "form-select" })
+                    </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ngày đăng</label>
+                            <input type="date" name="PostedDate" class="form-control"
+                                   value="@(Model.PostedDate.ToString("yyyy-MM-dd"))" />
+                        </div>
+                        <!-- Hạn nộp -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Hạn nộp hồ sơ</label>
+                            <input type="date" name="ExpirationDate" class="form-control" value="@(Model.ExpirationDate?.ToString("yyyy-MM-dd"))" />
+                        </div>
+
+                        <!-- Mô tả -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Mô tả công việc</label>
+                            <textarea name="JobDescription" rows="3" class="form-control">@Model.JobDescription</textarea>
+                        </div>
+
+                        <!-- Yêu cầu -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Yêu cầu công việc</label>
+                            <textarea name="Requirements" rows="3" class="form-control">@Model.Requirements</textarea>
+                        </div>
+
+                        <!-- Trạng thái -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Trạng thái</label>
+                            @Html.DropDownListFor(m => m.Status,
+                                                        new SelectList(ViewBag.StatusList, "Value", "Text", Model.Status),
+                                                        "-- Chọn trạng thái --",
+                                                        new { @class = "form-select" })
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Hủy
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Lưu thay đổi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

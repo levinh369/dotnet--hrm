@@ -1,0 +1,194 @@
+﻿@using DACN.Enums
+@model DACN.DTOs.Respone.AttendanceDetailRespone
+
+<div class="modal fade" id="attendanceDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold">
+                    <i class="fas fa-calendar-check me-2"></i>Chi tiết Chấm công
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body bg-light">
+
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <img src="@(Model.Avatar ?? "https://i.pravatar.cc/150?img=3")" class="rounded-circle border border-2 border-primary p-1" width="60" height="60">
+                            <div class="ms-3 flex-grow-1">
+                                <h5 class="fw-bold text-dark mb-0">@Model.EmployeeName</h5>
+                                <p class="text-muted mb-0 small">@Model.DepartmentName | ID: @Model.EmployeeId</p>
+                            </div>
+                            <div class="text-end">
+                                <p class="mb-0 text-muted small">Ngày chấm công</p>
+                                <h6 class="fw-bold text-primary">@Model.WorkDate?.ToString("dd/MM/yyyy")</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-white rounded shadow-sm border-start border-4 border-success text-center">
+                            <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Tổng giờ làm</small>
+                            <h4 class="mb-0 fw-bold text-success">@Model.WorkingHours.ToString("0.##")h</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-white rounded shadow-sm border-start border-4 @(Model.IsLate ? "border-danger" : "border-success") text-center">
+                            <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Đi muộn</small>
+                            <h4 class="mb-0 fw-bold @(Model.IsLate ? "text-danger" : "text-success")">
+                                @Model.LateMinutes p
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-white rounded shadow-sm border-start border-4 @(Model.IsLeftEarly ? "border-warning" : "border-success") text-center">
+                            <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Về sớm</small>
+                            <h4 class="mb-0 fw-bold @(Model.IsLeftEarly ? "text-warning" : "text-success")">
+                                @Model.EarlyMinutes p
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white fw-bold border-bottom py-3">
+                        <i class="fas fa-history me-2 text-primary"></i>Nhật ký hoạt động
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline">
+
+                            <div class="timeline-item pb-4 border-start ps-4 position-relative">
+                                <div class="position-absolute top-0 start-0 translate-middle bg-success text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;">
+                                    <i class="fas fa-sign-in-alt" style="font-size: 14px;"></i>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <h6 class="fw-bold text-success mb-0">Giờ vào (Check-in)</h6>
+
+                                    @if (Model.IsCheckInEdited)
+                                    {
+                                        <span class="badge bg-warning text-dark border border-warning rounded-pill shadow-sm">
+                                            <i class="fas fa-tools me-1"></i>Admin chỉnh sửa
+                                        </span>
+                                    }
+                                    else if (Model.IsLate)
+                                    {
+                                        <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill">Đi muộn @Model.LateMinutes p</span>
+                                    }
+                                    else if (Model.CheckIn != null)
+                                    {
+                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill">Đúng giờ</span>
+                                    }
+                                </div>
+
+                                <h2 class="fw-bold text-dark display-6 mb-0 mt-1">
+                                    @(Model.CheckIn?.ToString(@"hh\:mm") ?? "--:--")
+                                </h2>
+
+                                @if (Model.IsCheckInEdited)
+                                {
+                                    <div class="alert alert-warning border-0 bg-warning bg-opacity-10 mt-2 mb-0 p-2 rounded">
+                                        <div class="d-flex gap-2">
+                                            <i class="fas fa-info-circle text-warning mt-1"></i>
+                                            <div style="font-size: 0.85rem;">
+                                                <div><strong>Lý do sửa:</strong> @Model.EditReason</div>
+                                                <div class="text-muted fst-italic mt-1 border-top border-warning border-opacity-25 pt-1">
+                                                    Người sửa: <strong>@Model.EditedBy</strong> • Gốc: <span class="text-decoration-line-through fw-bold text-danger">@(Model.RawCheckIn?.ToString(@"hh\:mm") ?? "--:--")</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else if (Model.CheckIn != null)
+                                {
+                                    <small class="text-muted"><i class="fas fa-check-circle me-1 text-success"></i>Hệ thống tự động ghi nhận</small>
+                                }
+                                else
+                                {
+                                    <small class="text-danger"><i class="fas fa-exclamation-circle me-1"></i>Chưa có dữ liệu</small>
+                                }
+                            </div>
+
+                            <div class="timeline-item border-start ps-4 position-relative">
+                                <div class="position-absolute top-0 start-0 translate-middle bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;">
+                                    <i class="fas fa-sign-out-alt" style="font-size: 14px;"></i>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <h6 class="fw-bold text-primary mb-0">Giờ ra (Check-out)</h6>
+
+                                    @if (Model.IsCheckOutEdited)
+                                    {
+                                        <span class="badge bg-warning text-dark border border-warning rounded-pill shadow-sm">
+                                            <i class="fas fa-tools me-1"></i>Admin chỉnh sửa
+                                        </span>
+                                    }
+                                    else if (Model.IsLeftEarly)
+                                    {
+                                        <span class="badge bg-warning bg-opacity-10 text-dark rounded-pill">Về sớm @Model.EarlyMinutes p</span>
+                                    }
+                                    else if (Model.CheckOut != null)
+                                    {
+                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill">Đúng giờ</span>
+                                    }
+                                </div>
+
+                                <h2 class="fw-bold text-dark display-6 mb-0 mt-1">
+                                    @(Model.CheckOut?.ToString(@"hh\:mm") ?? "--:--")
+                                </h2>
+
+                                @if (Model.IsCheckOutEdited)
+                                {
+                                    <div class="alert alert-warning border-0 bg-warning bg-opacity-10 mt-2 mb-0 p-2 rounded">
+                                        <div class="d-flex gap-2">
+                                            <i class="fas fa-info-circle text-warning mt-1"></i>
+                                            <div style="font-size: 0.85rem;">
+                                                <div><strong>Lý do sửa:</strong> @Model.EditReason</div>
+                                                <div class="text-muted fst-italic mt-1 border-top border-warning border-opacity-25 pt-1">
+                                                    Người sửa: <strong>@Model.EditedBy</strong> • Gốc: <span class="text-decoration-line-through fw-bold text-danger">@(Model.RawCheckOut?.ToString(@"hh\:mm") ?? "--:--")</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else if (Model.CheckOut != null)
+                                {
+                                    <small class="text-muted"><i class="fas fa-check-circle me-1 text-success"></i>Hệ thống tự động ghi nhận</small>
+                                }
+                                else
+                                {
+                                    <small class="text-muted fst-italic">Đang làm việc / Chưa check-out</small>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Note))
+                {
+                    <div class="mt-3">
+                        <label class="fw-bold small text-muted">Ghi chú của nhân viên:</label>
+                        <div class="p-3 bg-white border rounded shadow-sm">
+                            <i class="fas fa-comment-dots text-muted me-2"></i>
+                            <span class="fst-italic text-dark">"@Model.Note"</span>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-outline-primary" onclick="Attendance.edit(@Model.Id)">
+                    <i class="fas fa-pen me-1"></i> Sửa lại
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

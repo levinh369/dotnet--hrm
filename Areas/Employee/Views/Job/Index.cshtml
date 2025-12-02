@@ -1,0 +1,19 @@
+﻿@model IEnumerable<DACN.DTOs.Respone.JobPostingRespone>
+@{
+    ViewData["Title"] = "Tìm kiếm việc làm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid mt-5 pt-5 my-5">
+    <div class="row g-4">
+        <div class="col-lg-4 col-md-5">
+            @await Html.PartialAsync("~/Views/Shared/_JobSearchForm.cshtml")
+        </div>
+
+        <div class="col-lg-8 col-md-7">
+            @await Html.PartialAsync("SearchResult.cshtml", Model)
+        </div>
+
+    </div>
+</div>
+

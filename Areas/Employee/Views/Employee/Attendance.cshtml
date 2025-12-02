@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Chấm Công Cá Nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="bg-light min-vh-100 d-flex align-items-center justify-content-center py-4">
+    <div class="card shadow-lg border rounded-3 w-100" style="max-width: 500px;">
+
+        <div class="card-body"
+             data-has-check-in="@ViewBag.HasCheckIn"
+             data-has-check-out="@ViewBag.HasCheckOut">
+
+            <div class="border rounded-3 bg-white p-3 text-center mb-4">
+                <div id="live-clock" class="fs-3 fw-semibold mb-1"></div>
+                <div id="live-date" class="text-muted mb-2"></div>
+                <div id="attendanceStatus">
+                    <span class="badge bg-secondary"><i class="fas fa-hourglass-start me-1"></i> Chưa điểm danh</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="mb-3">
+                    <label for="attendanceNote" class="form-label">Ghi Chú</label>
+                    <textarea id="attendanceNote" name="Note" class="form-control" rows="2" placeholder="Ví dụ: Làm việc tại nhà..."></textarea>
+                </div>
+
+                <button id="btnCheckIn" class="btn btn-success w-100 mb-2">
+                    <i class="fas fa-sign-in-alt me-2"></i> Check-in (Vào)
+                </button>
+
+                <button id="btnCheckOut" class="btn btn-warning w-100" style="display: none;">
+                    <i class="fas fa-sign-out-alt me-2"></i> Check-out (Ra)
+                </button>
+            </div>
+
+            <div>
+                <h5 class="fw-semibold mb-2">Hoạt động trong ngày</h5>
+                <div class="border rounded-3" style="max-height: 200px; overflow-y: auto;">
+                    <ul id="attendanceHistory" class="list-group list-group-flush">
+                        <li id="emptyHistory" class="list-group-item text-center text-muted small">Chưa có hoạt động</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/Employee/Attendance.js" asp-append-version="true"></script>
+}

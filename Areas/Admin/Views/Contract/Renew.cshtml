@@ -1,0 +1,228 @@
+﻿@using DACN.Enums
+@using static DACN.Enums.StatusEnums
+@model DACN.DTOs.Respone.ContractRespone
+
+<style>
+    /* CSS nhỏ để làm đẹp riêng cho Modal này */
+    .contract-section-title {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        color: #6c757d;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 5px;
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-right: none;
+    }
+
+    .form-control {
+        border-left: none;
+    }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #ced4da;
+            border-left: 1px solid #86b7fe; /* Hiệu ứng focus nhẹ */
+        }
+    /* Custom input group border fix */
+    .input-group .form-control:focus {
+        z-index: 3;
+    }
+
+    .avatar-placeholder {
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="modal fade" id="renewContractModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+
+            <div class="modal-header text-white border-0" style="background: linear-gradient(to right, #f2994a, #f2c94c);">
+                <div>
+                    <h5 class="modal-title fw-bold"><i class="fas fa-file-signature me-2"></i>Gia hạn Hợp đồng Lao động</h5>
+                    <p class="mb-0 small opacity-75">Tạo hợp đồng nối tiếp cho nhân viên</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="formRenewContract" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="modal-body p-4 bg-light">
+
+                    <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+                        <div class="card-body p-3 d-flex align-items-center bg-white">
+                            <div class="flex-shrink-0">
+                                <div class="avatar-placeholder">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 fw-bold text-dark">@Model.EmployeeName</h6>
+                                <div class="d-flex align-items-center text-muted small">
+                                    <span class="me-3"><i class="fas fa-building me-1"></i>@Model.DepartmentName</span>
+                                    <span><i class="fas fa-id-badge me-1"></i>@Model.PositionName</span>
+                                </div>
+                            </div>
+                            <div class="text-end d-none d-md-block">
+                                <div class="small text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Hợp đồng cũ</div>
+                                <div class="badge bg-secondary text-wrap">@Model.ContractCode</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 3px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="EmployeeId" value="@Model.EmployeeId" />
+
+                    <div class="row g-4">
+
+                        <div class="col-md-6">
+                            <div class="contract-section-title text-primary">
+                                <i class="fas fa-info-circle me-1"></i>Thông tin chung
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Mã Hợp đồng Mới</label>
+                                <div class="input-group shadow-sm">
+                                    <span class="input-group-text bg-white"><i class="fas fa-barcode text-primary"></i></span>
+                                    <input type="text" class="form-control fw-bold text-primary bg-white"
+                                           name="ContractCode" value="@Model.ContractCodeNew" readonly>
+                                    <span class="input-group-text bg-white text-success" title="Đã tự động tăng"><i class="fas fa-check-circle"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Loại Hợp đồng</label>
+                                <div class="input-group shadow-sm">
+                                    <span class="input-group-text bg-white"><i class="fas fa-briefcase text-muted"></i></span>
+                                    <select class="form-select border-start-0" name="ContractType">
+                                        @foreach (ContractType type in Enum.GetValues(typeof(ContractType)))
+                                        {
+                                            var name = type switch
+                                            {
+                                                ContractType.ThuViec => "Thử việc",
+                                                ContractType.ThoiVu => "Thời vụ",
+                                                ContractType.ChinhThuc => "Chính thức (Vô thời hạn)",
+                                                ContractType.CoThoiHan => "Có thời hạn",
+                                                _ => "Khác"
+                                            };
+                                            if (Model.ContractType == type)
+                                            {
+                                                <option value="@((int)type)" selected>@name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@((int)type)">@name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Lương cơ bản</label>
+                                <div class="input-group shadow-sm">
+                                    <span class="input-group-text bg-white"><i class="fas fa-money-bill-wave text-success"></i></span>
+                                    <input type="number" class="form-control fw-bold text-end border-start-0"
+                                           name="BasicSalary" value="@((int)Model.BasicSalary)" required>
+                                    <span class="input-group-text bg-white fw-bold">VNĐ</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Ghi chú</label>
+                                <textarea class="form-control shadow-sm" name="Note" rows="3" placeholder="Ghi chú bổ sung...">@Model.Note</textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="contract-section-title text-success">
+                                <i class="fas fa-calendar-alt me-1"></i>Thời hạn & Pháp lý
+                            </div>
+
+                            <div class="card bg-white border-0 shadow-sm mb-3">
+                                <div class="card-body p-3">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-success small"><i class="fas fa-play-circle me-1"></i>Có hiệu lực từ</label>
+                                        <input type="date" class="form-control border-success bg-success bg-opacity-10 fw-bold"
+                                               name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" required>
+                                        <div class="form-text small text-success fst-italic ms-1">
+                                            <i class="fas fa-link me-1"></i>Nối tiếp ngày kết thúc HĐ cũ.
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center text-muted my-1"><i class="fas fa-arrow-down"></i></div>
+
+                                    <div class="mb-0">
+                                        <label class="form-label fw-bold small">Đến ngày (Dự kiến)</label>
+                                        <input type="date" class="form-control" name="EndDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">Ngày ký</label>
+                                    <input type="date" class="form-control shadow-sm" name="SignedDate" value="@Model.SignedDate.ToString("yyyy-MM-dd")">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">Trạng thái</label>
+                                    <select class="form-select" name="status"
+                                            asp-items="Html.GetEnumSelectList<ContractStatus>()">
+                                        <option value="-1">-- Tất cả --</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Hồ sơ đính kèm</label>
+                                <div class="card border border-dashed bg-light">
+                                    <div class="card-body p-2 text-center">
+                                        <input type="file" class="form-control form-control-sm mb-2" name="FileContract" id="renewFile">
+
+                                        @if (!string.IsNullOrEmpty(Model.FilePath))
+                                        {
+                                            <div class="d-inline-flex align-items-center p-1 px-2 rounded bg-white border">
+                                                <i class="fas fa-history text-muted me-2"></i>
+                                                <a href="@Model.FilePath" target="_blank" class="text-decoration-none small fw-bold text-secondary">
+                                                    Xem HĐ cũ (@System.IO.Path.GetFileName(Model.FilePath))
+                                                </a>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <small class="text-muted">Vui lòng tải lên bản scan đã ký.</small>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-white border-top-0 pb-4 pe-4">
+                    <button type="button" class="btn btn-light px-4 fw-bold text-muted" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-warning px-4 fw-bold text-dark shadow-sm">
+                        <i class="fas fa-file-signature me-2"></i>Hoàn tất Gia hạn
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
