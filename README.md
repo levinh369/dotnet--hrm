@@ -13,7 +13,7 @@ Hệ thống tích hợp thông báo thời gian thực và Email tự động g
     * **Thông báo tự động:** Khi HR thay đổi trạng thái hồ sơ, hệ thống lập tức gửi Thông báo (SignalR) về tài khoản ứng viên và gửi Email kết quả tương ứng.
 
 ### 2. Quản lý Nhân sự & Hợp đồng
-* **Hồ sơ nhân viên 360:** Lưu trữ tập trung thông tin cá nhân, bằng cấp. Nhân viên có thể tự cập nhật thông tin cá nhân (địa chỉ, sđt...).
+* **Hồ sơ nhân viên:** Lưu trữ tập trung thông tin cá nhân, bằng cấp. Nhân viên có thể tự cập nhật thông tin cá nhân (địa chỉ, sđt...).
 * **Cơ cấu tổ chức:** Quản lý danh sách Phòng ban (Departments) và phân bổ nhân viên vào các vị trí phù hợp.
 * **Quản lý Hợp đồng (Contracts):**
     * Lưu trữ chi tiết hợp đồng (Thử việc, Chính thức, Thời vụ).
